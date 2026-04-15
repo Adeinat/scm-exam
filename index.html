@@ -130,16 +130,13 @@
       <input id="inp-id" type="text" placeholder="e.g. 202212345">
     </div>
     <div style="margin-top:0.5rem;font-size:13px;color:var(--text2);margin-bottom:1rem">
-      Time allowed: 65 minutes · 18 questions · Calculators permitted
+      Time allowed: 65 minutes · 18 questions · 1 attempt only · Calculators permitted
     </div>
     <button class="btn btn-primary" onclick="doLogin()" id="btn-login">Start exam →</button>
   </div>
 
-  <div id="prev-attempts-section" style="display:none;margin-top:1rem">
-    <div class="card">
-      <h3 style="margin-bottom:12px">Your previous attempts</h3>
+  <div id="prev-attempts-section" style="display:none">
       <div id="prev-attempts-list"></div>
-    </div>
   </div>
 </div>
 
@@ -192,16 +189,16 @@
     <div id="res-detail"></div>
   </div>
 
-  <button class="btn btn-primary" onclick="retake()">Try again →</button>
+  <p style="font-size:13px;color:var(--text2);margin-top:1rem">Your results have been saved. You may close this window.</p>
 </div>
 
 </div>
 
 <script>
 // ── CONFIG — replace with your Supabase values ─────────────────────────
-const SUPABASE_URL = 'https://pzrnkocekbusxhozpiee.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cm5rb2Nla2J1c3hob3pwaWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDUwMzYsImV4cCI6MjA5MTc4MTAzNn0.JU8TMKLPkEWkUqT7fn6G2F1_XVCcA4MQs6GQhUJoR74';
-const ANTHROPIC_API_KEY = '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';
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const ANTHROPIC_API_KEY = 'YOUR_ANTHROPIC_API_KEY';
 // ────────────────────────────────────────────────────────────────────────
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -335,21 +332,23 @@ async function doLogin() {
 
   // Check previous attempts
   const { data: prev } = await sb.from('exam_attempts')
-    .select('id,grade,created_at,attempt_number')
+    .select('id,grade,created_at,attempt_number,status,results,answers')
     .eq('student_id', sid)
     .order('created_at', {ascending:false});
 
-  if (prev && prev.length > 0) {
-    const list = document.getElementById('prev-attempts-list');
-    list.innerHTML = prev.slice(0,5).map(a=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
-        <span style="font-size:14px;color:var(--text2)">Attempt ${a.attempt_number} · ${new Date(a.created_at).toLocaleDateString()}</span>
-        <span class="badge badge-${a.grade}">${a.grade}</span>
-      </div>`).join('') + `<div style="padding-top:8px;font-size:13px;color:var(--text2)">You can attempt this exam as many times as you like.</div>`;
-    document.getElementById('prev-attempts-section').style.display = 'block';
+  // Block if already completed one attempt
+  const completed = prev ? prev.filter(a => a.status === 'completed') : [];
+  if (completed.length > 0) {
+    const a = completed[0];
+    const gradeLabels = {D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
+    err.innerHTML = `You have already submitted this exam on ${new Date(a.created_at).toLocaleDateString()}.<br>Your grade was: <strong>${gradeLabels[a.grade] || a.grade}</strong>.<br>Only one attempt is allowed.`;
+    err.style.display = 'block';
+    document.getElementById('btn-login').disabled = false;
+    document.getElementById('btn-login').innerHTML = 'Start exam →';
+    return;
   }
 
-  const attemptNum = prev ? prev.length + 1 : 1;
+  const attemptNum = 1;
   const { data: newAttempt } = await sb.from('exam_attempts').insert({
     student_name: name, student_id: sid,
     attempt_number: attemptNum, grade: null, status: 'in_progress'
