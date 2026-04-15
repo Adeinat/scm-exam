@@ -198,7 +198,7 @@ let examOpen = false;
 function doLogin() {
   const pass = document.getElementById('inp-pass').value;
   const err  = document.getElementById('login-err');
-  if (pass !== scm2026) {
+  if (pass !== 'scm2026') {
     err.textContent = 'Incorrect password.'; err.style.display='block'; return;
   }
   sessionStorage.setItem('instructor_auth','1');
