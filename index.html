@@ -424,36 +424,83 @@ async function submitExam() {
 }
 
 async function gradeOne(q, ans, idx) {
-  const prompt = `You are grading a supply chain management exam answer. Grade strictly against the PMD criteria.
+  const prompt = `You are grading a supply chain management exam answer. Grade strictly against the PMD criteria below. Be fair but rigorous.
 
-Question: ${q.q}
-${q.hint ? 'Hint given to student: '+q.hint : ''}
-${q.scenario ? 'Context given to student: '+q.scenario : ''}
+QUESTION: ${q.q}
+${q.hint ? 'HINT GIVEN TO STUDENT: ' + q.hint : ''}
+${q.scenario ? 'CONTEXT GIVEN TO STUDENT: ' + q.scenario : ''}
 
-Criteria:
-- P1: ${q.criteria.p1}
-- P2: ${q.criteria.p2}
-- Merit: ${q.criteria.m || 'Not applicable'}
-- Distinction: ${q.criteria.d || 'Not applicable'}
+GRADING CRITERIA:
+P1 (basic pass): ${q.criteria.p1}
+P2 (full pass): ${q.criteria.p2}
+Merit: ${q.criteria.m || 'Not applicable for this question'}
+Distinction: ${q.criteria.d || 'Not applicable for this question'}
 
-Student answer: "${ans || '(no answer)'}"
+STUDENT ANSWER: ${ans || '(no answer provided)'}
 
-Respond ONLY with valid JSON, no other text:
-{"passed_p1":true/false,"passed_p2":true/false,"passed_m":true/false,"passed_d":true/false,"feedback":"2-3 sentences: what was correct, what was missing, what to improve"}`;
+IMPORTANT RULES:
+- If P2 is not applicable, set passed_p2 same as passed_p1
+- If Merit is not applicable, set passed_m same as passed_p2
+- If Distinction is not applicable, set passed_d same as passed_m
+- Be encouraging but honest in feedback
+- Feedback must be a plain string, no line breaks inside it
+
+You MUST respond with ONLY this exact JSON format and nothing else:
+{"passed_p1":true,"passed_p2":false,"passed_m":false,"passed_d":false,"feedback":"Your feedback here as a single sentence or two."}`;
 
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }]
+      })
     });
-    const d = await r.json();
-    const txt = d.content?.[0]?.text || '{}';
-    return {idx, ...JSON.parse(txt.replace(/```json|```/g,'').trim())};
-  } catch(e) {
-    return {idx,passed_p1:false,passed_p2:false,passed_m:false,passed_d:false,feedback:'Could not grade this answer.'};
+
+    if (!r.ok) {
+      console.error('API error:', r.status, await r.text());
+      return { idx, passed_p1: false, passed_p2: false, passed_m: false, passed_d: false, feedback: 'Grading service error. Please contact your instructor.' };
+    }
+
+    const data = await r.json();
+    const raw = data?.content?.[0]?.text || '';
+    console.log('Raw API response for Q' + (idx+1) + ':', raw);
+
+    // Strip any markdown fences and whitespace
+    const clean = raw.replace(/```json|```/g, '').trim();
+
+    // Find the JSON object even if there's extra text around it
+    const match = clean.match(/\{[\s\S]*\}/);
+    if (!match) {
+      console.error('No JSON found in response:', clean);
+      return { idx, passed_p1: false, passed_p2: false, passed_m: false, passed_d: false, feedback: 'Could not parse grading response. Answer was recorded.' };
+    }
+
+    const parsed = JSON.parse(match[0]);
+
+    // Ensure all fields exist with fallbacks
+    return {
+      idx,
+      passed_p1: parsed.passed_p1 === true,
+      passed_p2: parsed.passed_p2 === true,
+      passed_m:  parsed.passed_m  === true,
+      passed_d:  parsed.passed_d  === true,
+      feedback:  typeof parsed.feedback === 'string' ? parsed.feedback : 'See instructor for feedback.'
+    };
+
+  } catch (e) {
+    console.error('gradeOne error for Q' + (idx+1) + ':', e);
+    return { idx, passed_p1: false, passed_p2: false, passed_m: false, passed_d: false, feedback: 'Grading failed for this question. Answer was recorded.' };
   }
 }
+
 
 function computeGrade(results) {
   const pQs = QUESTIONS.map((q,i)=>({i,l:q.pmd_level})).filter(q=>q.l==='P1'||q.l==='P2');
