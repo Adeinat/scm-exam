@@ -146,9 +146,9 @@ label{font-size:14px;font-weight:500;display:block;margin-bottom:6px;color:var(-
 // ================================================================
 // PASTE YOUR THREE KEYS BELOW — replace the placeholder text only
 // ================================================================
-const SUPABASE_URL = 'https://pzrnkocekbusxhozpiee.supabase.co';
+const SUPABASE_URL     = 'https://pzrnkocekbusxhozpiee.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cm5rb2Nla2J1c3hob3pwaWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDUwMzYsImV4cCI6MjA5MTc4MTAzNn0.JU8TMKLPkEWkUqT7fn6G2F1_XVCcA4MQs6GQhUJoR74';
-const ANTHROPIC_API_KEY = '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';
+// Anthropic API key is now stored securely in Supabase Edge Function secrets
 // ================================================================
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -283,19 +283,13 @@ async function gradeOne(q, ans, idx) {
     '{"passed_p1":true,"passed_p2":false,"passed_m":false,"passed_d":false,"feedback":"your feedback here"}';
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('https://pzrnkocekbusxhozpiee.supabase.co/functions/v1/grade-answer', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'apikey': SUPABASE_ANON_KEY
       },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 250,
-        messages: [{role:'user', content: prompt}]
-      })
+      body: JSON.stringify({ prompt })
     });
 
     if (!resp.ok) {
