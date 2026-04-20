@@ -179,12 +179,10 @@ select{border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;
 </div>
 <script>
 // ============================================================
-const SUPABASE_URL = 'https://pzrnkocekbusxhozpiee.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cm5rb2Nla2J1c3hob3pwaWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDUwMzYsImV4cCI6MjA5MTc4MTAzNn0.JU8TMKLPkEWkUqT7fn6G2F1_XVCcA4MQs6GQhUJoR74';
-const ANTHROPIC_API_KEY = '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';
+const SUPABASE_URL       = 'https://pzrnkocekbusxhozpiee.supabase.co';
+const SUPABASE_ANON_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cm5rb2Nla2J1c3hob3pwaWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDUwMzYsImV4cCI6MjA5MTc4MTAzNn0.JU8TMKLPkEWkUqT7fn6G2F1_XVCcA4MQs6GQhUJoR74';
 const INSTRUCTOR_PASSWORD = 'scm2026';
-
-  // ============================================================
+// ============================================================
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let allAttempts = [];
