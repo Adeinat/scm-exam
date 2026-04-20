@@ -246,7 +246,7 @@ async function loadData(){
 }
 
 async function toggleExam(val){
-  await sb.from('exam_settings').upsert({id:1, is_open:val});
+  await sb.from('exam_settings').update({is_open:val}).eq('id',1);
   document.getElementById('tog-label').textContent = val ? 'Open' : 'Closed';
   const tb = document.getElementById('tog-badge');
   tb.textContent = val ? 'OPEN' : 'CLOSED';
@@ -256,7 +256,8 @@ async function toggleExam(val){
 async function setDuration(){
   const mins = parseInt(document.getElementById('inp-duration').value);
   if(!mins || mins < 10){ alert('Please enter a valid duration (minimum 10 minutes).'); return; }
-  await sb.from('exam_settings').upsert({id:1, exam_minutes:mins});
+  const {error} = await sb.from('exam_settings').update({exam_minutes:mins}).eq('id',1);
+  if(error){ alert('Save failed: ' + error.message); return; }
   const msg = document.getElementById('dur-msg');
   msg.style.display = 'inline';
   setTimeout(()=>{ msg.style.display='none'; }, 3000);
@@ -267,7 +268,7 @@ async function grantExtra(){
   if(!add || add < 1){ alert('Please enter a valid number of minutes.'); return; }
   const {data:curr} = await sb.from('exam_settings').select('extra_minutes').eq('id',1).single();
   const total = (curr?.extra_minutes || 0) + add;
-  await sb.from('exam_settings').upsert({id:1, extra_minutes:total});
+  await sb.from('exam_settings').update({extra_minutes:total}).eq('id',1);
   document.getElementById('extra-total').textContent = 'Total extra granted so far: ' + total + ' min';
   document.getElementById('inp-extra').value = '';
   const msg = document.getElementById('extra-msg');
