@@ -7,393 +7,497 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#fff;--bg2:#f8f8f7;--bg3:#f2f1ef;--text:#1a1a1a;--text2:#595959;--text3:#888;--border:#e0ddd8;--border2:#ccc;--blue:#1F4E79;--blue-light:#D6E4F0;--green:#1B5E20;--green-light:#E8F5E9;--red:#C00000;--red-light:#FCE4E4;--amber:#633806;--amber-light:#FAEEDA;--radius:10px;--radius-sm:6px}
-@media(prefers-color-scheme:dark){:root{--bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;--text:#f0f0f0;--text2:#aaa;--text3:#666;--border:#3a3a3a;--border2:#444;--blue-light:#0c2d47;--green-light:#0d2e10;--red-light:#3a0000;--amber-light:#2a1500}}
+:root{
+  --bg:#ffffff;--bg2:#f8f8f7;--bg3:#f2f1ef;
+  --text:#1a1a1a;--text2:#595959;--text3:#999;
+  --border:#e0ddd8;--border2:#ccc;
+  --blue:#1F4E79;--blue-bg:#D6E4F0;
+  --green:#1B5E20;--green-bg:#E8F5E9;
+  --red:#C00000;--red-bg:#FCE4E4;
+  --amber:#633806;--amber-bg:#FAEEDA;
+  --r:10px;--rs:6px
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
+  --text:#f0f0f0;--text2:#aaa;--text3:#666;
+  --border:#3a3a3a;--border2:#555;
+  --blue-bg:#0c2d47;--green-bg:#0d2e10;--red-bg:#3a0000;--amber-bg:#2a1500
+}}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg3);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
-.page{max-width:680px;margin:0 auto;padding:1.5rem 1rem 3rem}
-.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem}
+.wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem}
 h1{font-size:22px;font-weight:600;margin-bottom:4px}
-h2{font-size:18px;font-weight:600;margin-bottom:12px}
+h2{font-size:18px;font-weight:600;margin-bottom:10px}
 h3{font-size:15px;font-weight:600;margin-bottom:8px}
-.subtitle{color:var(--text2);font-size:14px}
-input,textarea{width:100%;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);transition:border .2s}
+.sub{color:var(--text2);font-size:14px}
+input,textarea{width:100%;border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);transition:border .2s}
 input:focus,textarea:focus{outline:none;border-color:var(--blue)}
 textarea{resize:vertical;min-height:100px;line-height:1.6}
-.btn{border:1px solid var(--border2);background:var(--bg);color:var(--text);padding:9px 20px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn{border:1px solid var(--border2);background:var(--bg);color:var(--text);padding:9px 20px;border-radius:var(--rs);cursor:pointer;font-size:14px;font-family:inherit;transition:all .15s}
 .btn:hover{background:var(--bg2)}
-.btn-primary{background:var(--text);color:var(--bg);border-color:transparent}
-.btn-primary:hover{opacity:.85}
+.btn-p{background:var(--text);color:var(--bg);border-color:transparent}
+.btn-p:hover{opacity:.85}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
-.badge-D{background:var(--green-light);color:var(--green)}
-.badge-M{background:var(--blue-light);color:var(--blue)}
-.badge-P,.badge-P1,.badge-P2{background:var(--amber-light);color:var(--amber)}
-.badge-U{background:var(--red-light);color:var(--red)}
-.progress{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:8px 0}
-.progress-bar{height:100%;background:var(--blue);transition:width .4s}
-.hint{font-size:13px;color:var(--text2);font-style:italic;margin:4px 0 10px;padding:8px 12px;background:var(--bg2);border-radius:var(--radius-sm);border-left:3px solid var(--border2)}
-.scenario{font-size:13px;color:var(--text2);padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:14px;border-left:3px solid var(--blue)}
-.q-meta{font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.q-text{font-size:15px;margin-bottom:10px;font-weight:500;line-height:1.5}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--text);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.result-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-.result-item:last-child{border-bottom:none}
-.icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px;font-weight:700}
-.icon-pass{background:var(--green-light);color:var(--green)}
-.icon-fail{background:var(--red-light);color:var(--red)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.bd{background:var(--green-bg);color:var(--green)}
+.bm{background:var(--blue-bg);color:var(--blue)}
+.bp{background:var(--amber-bg);color:var(--amber)}
+.bu{background:var(--red-bg);color:var(--red)}
+.prog{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:8px 0}
+.prog-bar{height:100%;background:var(--blue);transition:width .4s}
+.hint{font-size:13px;color:var(--text2);font-style:italic;padding:8px 12px;background:var(--bg2);border-radius:var(--rs);border-left:3px solid var(--border2);margin:4px 0 10px}
+.scenario{font-size:13px;color:var(--text2);padding:10px 14px;background:var(--bg2);border-radius:var(--rs);margin-bottom:14px;border-left:3px solid var(--blue)}
+.qmeta{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.qtext{font-size:15px;margin-bottom:10px;font-weight:500;line-height:1.5;user-select:none;-webkit-user-select:none}
+.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--text);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ritem{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ritem:last-child{border-bottom:none}
+.dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px;font-weight:700}
+.dot-ok{background:var(--green-bg);color:var(--green)}
+.dot-no{background:var(--red-bg);color:var(--red)}
 .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem}
-label{font-size:14px;font-weight:500;display:block;margin-bottom:6px;color:var(--text)}
-.form-group{margin-bottom:1rem}
-.alert{padding:10px 14px;border-radius:var(--radius-sm);font-size:14px;margin-bottom:1rem}
-.alert-error{background:var(--red-light);color:var(--red);border:1px solid var(--red)}
-.pmd-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
-.pmd-table th,.pmd-table td{border:1px solid var(--border);padding:8px 10px;text-align:left}
-.pmd-table th{background:var(--bg2);font-weight:600}
-@media(max-width:500px){.page{padding:1rem .75rem}.card{padding:1.25rem}}
+.err{padding:10px 14px;border-radius:var(--rs);font-size:14px;margin-bottom:1rem;background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.fg{margin-bottom:1rem}
+.fg label{font-size:14px;font-weight:500;display:block;margin-bottom:6px}
+.pmd{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.pmd th,.pmd td{border:1px solid var(--border);padding:7px 10px;text-align:left}
+.pmd th{background:var(--bg2);font-weight:600}
+.grade-big{font-size:64px;font-weight:700;line-height:1}
+.miss-box{background:var(--red-bg);border:1px solid var(--red);border-radius:var(--rs);padding:10px 14px;font-size:13px;margin-top:6px}
+.pass-box{background:var(--green-bg);border:1px solid var(--green);border-radius:var(--rs);padding:6px 12px;font-size:13px;margin-top:6px}
+.timer{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:5px 12px;border-radius:var(--rs);background:var(--bg2);border:1px solid var(--border)}
+.timer-warn{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+.timer-danger{background:var(--red-bg);border-color:var(--red);color:var(--red);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.time-banner{display:none;background:var(--green-bg);border:1px solid var(--green);color:var(--green);border-radius:var(--rs);padding:8px 14px;font-size:13px;font-weight:600;margin-bottom:8px;text-align:center}
 </style>
 </head>
 <body>
-<div class="page">
+<div class="wrap">
 
-<div id="screen-closed" style="display:none">
+<div id="s-closed" style="display:none">
   <div class="card" style="text-align:center;padding:3rem 1rem;margin-top:2rem">
     <div style="font-size:48px;margin-bottom:1rem">&#128274;</div>
     <h2>Exam is currently closed</h2>
-    <p class="subtitle" style="margin-top:8px">This exam is not available right now.<br>Please wait for your instructor to open it.</p>
+    <p class="sub" style="margin-top:8px">Please wait for your instructor to open it.</p>
   </div>
 </div>
 
-<div id="screen-login" style="display:none">
+<div id="s-login" style="display:none">
   <div style="margin-bottom:1.5rem">
     <h1>SCM 106321 &#8212; Practice Exam</h1>
-    <p class="subtitle">Al-Hussein Technical University &#183; Dr. Hamza Adeinat &#183; Spring 2026</p>
+    <p class="sub">Al-Hussein Technical University &#183; Dr. Hamza Adeinat &#183; Spring 2026</p>
   </div>
   <div class="card" style="margin-bottom:1rem">
-    <table class="pmd-table">
-      <tr><th>Grade</th><th>Criteria</th></tr>
-      <tr><td><span class="badge badge-D">D</span></td><td>Passed all P1, P2, Merit, and Distinction questions</td></tr>
-      <tr><td><span class="badge badge-M">M</span></td><td>Passed all P and M questions; failed one or more D questions</td></tr>
-      <tr><td><span class="badge badge-P">P</span></td><td>Passed all P questions; failed one or more M or D questions</td></tr>
-      <tr><td><span class="badge badge-U">U</span></td><td>Failed one or more P questions</td></tr>
+    <table class="pmd">
+      <tr><th>Grade</th><th>How it is calculated</th></tr>
+      <tr><td><span class="badge bd">D</span></td><td>All questions passed</td></tr>
+      <tr><td><span class="badge bm">M</span></td><td>All P and M questions passed; at least one D question failed</td></tr>
+      <tr><td><span class="badge bp">P</span></td><td>All P questions passed; at least one M or D question failed</td></tr>
+      <tr><td><span class="badge bu">U</span></td><td>At least one P question failed</td></tr>
     </table>
   </div>
   <div class="card">
     <h3 style="margin-bottom:14px">Sign in to begin</h3>
-    <div id="login-error" class="alert alert-error" style="display:none"></div>
-    <div class="form-group">
-      <label for="inp-name">Full Name</label>
-      <input id="inp-name" type="text" placeholder="e.g. Ahmed Al-Rashidi">
-    </div>
-    <div class="form-group">
-      <label for="inp-id">Student ID</label>
-      <input id="inp-id" type="text" placeholder="e.g. 202212345">
-    </div>
-    <div style="margin-top:.5rem;font-size:13px;color:var(--text2);margin-bottom:1rem">
-      Time allowed: 65 minutes &#183; 18 questions &#183; 1 attempt only &#183; Calculators permitted
-    </div>
-    <button class="btn btn-primary" onclick="doLogin()" id="btn-login">Start exam &#8594;</button>
+    <div id="login-err" class="err" style="display:none"></div>
+    <div class="fg"><label>Full Name</label><input id="inp-name" type="text" placeholder="e.g. Ahmed Al-Rashidi" autocomplete="off"></div>
+    <div class="fg"><label>Student ID</label><input id="inp-id" type="text" placeholder="e.g. 202212345" autocomplete="off"></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem" id="exam-info">One attempt only &#183; Calculators permitted</p>
+    <button class="btn btn-p" onclick="doLogin()" id="btn-login">Start exam &#8594;</button>
   </div>
 </div>
 
-<div id="screen-exam" style="display:none">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div>
-      <div style="font-weight:600" id="exam-name"></div>
-      <div class="subtitle" id="exam-part" style="font-size:13px"></div>
+<div id="s-exam" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-weight:600" id="e-name"></div><div class="sub" id="e-part" style="font-size:13px"></div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="sub" style="font-size:13px" id="e-cnt"></div>
+      <div class="timer" id="timer">&#9201; --:--</div>
     </div>
-    <div class="subtitle" style="font-size:13px" id="exam-counter"></div>
   </div>
-  <div class="progress"><div class="progress-bar" id="exam-progress" style="width:0%"></div></div>
-  <div id="exam-question" style="margin-top:1.2rem"></div>
+  <div class="prog"><div class="prog-bar" id="e-prog" style="width:0%"></div></div>
+  <div class="time-banner" id="time-banner"></div>
+  <div id="e-q" style="margin-top:1.2rem"></div>
   <div class="nav">
-    <button class="btn" id="btn-prev" onclick="navigate(-1)">&#8592; Back</button>
-    <button class="btn btn-primary" id="btn-next" onclick="navigate(1)">Next &#8594;</button>
+    <button class="btn" id="btn-prev" onclick="nav(-1)">&#8592; Back</button>
+    <button class="btn btn-p" id="btn-next" onclick="nav(1)">Next &#8594;</button>
   </div>
 </div>
 
-<div id="screen-grading" style="display:none">
+<div id="s-grading" style="display:none">
   <div class="card" style="text-align:center;padding:2.5rem;margin-top:2rem">
-    <div class="spinner" style="width:36px;height:36px;margin:0 auto 1.2rem"></div>
+    <div class="spin" style="width:36px;height:36px;margin:0 auto 1.2rem"></div>
     <h2>Grading your exam</h2>
-    <p class="subtitle" id="grading-msg" style="margin-top:8px">Evaluating answers&#8230;</p>
-    <div class="progress" style="max-width:320px;margin:1.2rem auto 0">
-      <div class="progress-bar" id="grading-progress" style="width:0%"></div>
-    </div>
+    <p class="sub" id="g-msg" style="margin-top:8px">Please wait&#8230;</p>
+    <div class="prog" style="max-width:320px;margin:1.2rem auto 0"><div class="prog-bar" id="g-prog" style="width:0%"></div></div>
   </div>
 </div>
 
-<div id="screen-results" style="display:none">
+<div id="s-results" style="display:none">
   <div class="card" style="margin-bottom:1rem">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div>
-        <p class="subtitle" id="res-name" style="margin-bottom:4px"></p>
-        <h2 id="res-headline" style="margin-bottom:4px"></h2>
-        <p class="subtitle" id="res-sub" style="font-size:13px"></p>
+        <p class="sub" id="r-name" style="margin-bottom:4px"></p>
+        <h2 id="r-head" style="margin-bottom:4px"></h2>
+        <p class="sub" id="r-sub" style="font-size:13px"></p>
       </div>
-      <div id="res-grade-big" style="font-size:64px;font-weight:700;line-height:1"></div>
+      <div id="r-grade" class="grade-big"></div>
     </div>
   </div>
   <div class="card" style="margin-bottom:1rem">
     <h3 style="margin-bottom:1rem">Question-by-question feedback</h3>
-    <div id="res-detail"></div>
+    <div id="r-detail"></div>
   </div>
-  <p style="font-size:13px;color:var(--text2);margin-top:1rem">Your results have been saved. You may close this window.</p>
+  <p style="font-size:13px;color:var(--text2)">Your results have been saved. You may close this window.</p>
 </div>
 
 </div>
 <script>
-// ================================================================
-// PASTE YOUR THREE KEYS BELOW — replace the placeholder text only
-// ================================================================
+// ============================================================
 const SUPABASE_URL     = 'https://pzrnkocekbusxhozpiee.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cm5rb2Nla2J1c3hob3pwaWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDUwMzYsImV4cCI6MjA5MTc4MTAzNn0.JU8TMKLPkEWkUqT7fn6G2F1_XVCcA4MQs6GQhUJoR74';
 // Anthropic API key is now stored securely in Supabase Edge Function secrets
-// ================================================================
+// ============================================================
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const QUESTIONS = [
-  {part:"A",label:"Supply Chain Fundamentals",scenario:"ReadyMart is a large superstore chain selling groceries, electronics, and clothing across Jordan. Revenue per unit sold averages JD 8.50. Total supply chain cost averages JD 5.20 per unit.",q:"Q1. Calculate the supply chain surplus per unit for ReadyMart. What does this number tell management about the health of the supply chain?",hint:"Supply Chain Surplus = Customer Value minus Supply Chain Cost",pmd_level:"P2",criteria:{p1:"Correct formula applied and surplus = JD 3.30",p2:"Correct calculation AND meaningful interpretation of what JD 3.30 means",m:null,d:null}},
-  {part:"A",label:"Supply Chain Fundamentals",q:"Q2. For each decision, identify whether it is Strategic, Planning, or Operational and explain why in one sentence. (a) Signing a 5-year lease on a new warehouse in Aqaba. (b) Deciding how many units of tomato paste to stock for next quarter. (c) Approving the delivery route for tomorrow's truck to Irbid. (d) Choosing to outsource all last-mile delivery to a 3PL.",pmd_level:"P2",criteria:{p1:"At least 3 of 4 correctly classified",p2:"All 4 correctly classified with a clear reason for each",m:null,d:null}},
-  {part:"A",label:"Supply Chain Fundamentals",q:"Q3. ReadyMart sells salt (predictable demand, low margin) and the latest smartphone (unpredictable demand, high margin). Using the implied uncertainty spectrum, explain which product has higher implied demand uncertainty and what type of supply chain each product requires.",pmd_level:"M",criteria:{p1:"Correctly identifies smartphone as higher uncertainty",p2:"Correct identification AND names efficient vs responsive supply chain for each",m:"Fully explains why using the implied uncertainty spectrum linking demand characteristics to supply chain type with reasoning",d:null}},
-  {part:"B",label:"Achieving Strategic Fit",scenario:"SwiftWear launches new fashion collections every 3 weeks. It produces in small batches in Turkey (fast but expensive) and accepts stockouts rather than overstocking. BasicThread sells plain white t-shirts year-round in fixed sizes. It manufactures in bulk in Bangladesh (cheap, slow) and almost never stocks out.",q:"Q4. Using the responsiveness spectrum and the implied uncertainty spectrum, describe where each company sits. Then explain whether each company has achieved strategic fit.",hint:"Consider: what does each company's customer demand look like? What type of supply chain do they need?",pmd_level:"D",criteria:{p1:"Correctly places at least one company on the spectrums",p2:"Both companies correctly placed and strategic fit assessed for both",m:"Analyzes WHY each company has or has not achieved fit connecting demand characteristics to supply chain capabilities",d:"Critically evaluates both companies with evidence, explains what strategic fit means in each case, and discusses what would happen if they were misaligned"}},
-  {part:"B",label:"Achieving Strategic Fit",q:"Q5. SwiftWear decides to expand by selling trendy items AND basic plain items across online and physical stores. Explain what challenge this creates for strategic fit and what concept from the course addresses it.",pmd_level:"M",criteria:{p1:"Identifies that there is a conflict between two different supply chain needs",p2:"Names the conflict correctly and mentions tailored supply chain as the solution",m:"Explains tailored supply chain clearly, applies it to SwiftWear, gives an example of how it works",d:null}},
-  {part:"B",label:"Achieving Strategic Fit",q:"Q6. SwiftWear's marketing team runs a flash sale without informing operations, causing an order surge the warehouse cannot handle. Which scope of strategic fit was violated? What scope should the company be operating at to avoid this problem?",pmd_level:"M",criteria:{p1:"Correctly names intrafunctional as the violated scope",p2:"Names intrafunctional violation AND names interfunctional as the correct scope",m:"Clearly explains what each scope means and why the transition to interfunctional would have prevented the problem",d:null}},
-  {part:"C",label:"Network Design and C2C",scenario:"FreshLink distributes fresh produce across Jordan. Annual demand from Irbid: 600,000 units/year. Fixed cost of Irbid DC: JD 180,000/year. Current cost to serve Irbid from Amman: JD 0.65/unit. Cost from Irbid DC: JD 0.30/unit. Inventory turnover: 8.2. AR turnover: 12.5. AP turnover: 6.0.",q:"Q7. Should FreshLink open the Irbid DC? Calculate the annual transportation cost savings and compare them to the fixed cost. Show your work and state your recommendation.",pmd_level:"D",criteria:{p1:"Calculates saving per unit (JD 0.35) and total saving (JD 210,000)",p2:"Correct savings calculation and correct comparison to fixed cost JD 180,000",m:"Full calculation, correct net benefit JD 30,000, clear recommendation with justification",d:"Full calculation with recommendation AND discusses limitations or the break-even volume"}},
-  {part:"C",label:"Network Design and C2C",q:"Q8. Calculate FreshLink's Cash-to-Cash (C2C) cycle. Interpret the result. Does FreshLink pay its suppliers before or after it collects from customers? Is this good or bad?",hint:"C2C = (365 divided by Inventory Turnover) + (365 divided by AR Turnover) minus (365 divided by AP Turnover)",pmd_level:"P2",criteria:{p1:"Correct formula and C2C approximately 13 days calculated",p2:"Correct calculation AND correct interpretation: pays before collecting, positive C2C means working capital is needed",m:null,d:null}},
-  {part:"C",label:"Network Design and C2C",q:"Q9. FreshLink wants to improve its C2C cycle. Name two specific actions: one that reduces the inventory period and one that improves the accounts payable period. For each, state one trade-off or risk.",pmd_level:"M",criteria:{p1:"Names one valid action for either period",p2:"Names a valid action for each period with at least one trade-off",m:"Names a valid action for each period with a clear specific trade-off for each that shows understanding of the cost-benefit tension",d:null}},
-  {part:"D",label:"NPV and Decision Trees",scenario:"ColdChain Logistics: k = 0.10. Annual revenue = JD 120,000/year for both options. Option 1 Lease: JD 50,000/year cost. Option 2 Buy: JD 80,000 one-time cost in Year 1 only. Cash flows at end of each year.",q:"Q10. Calculate the NPV for both options over 2 years using k = 0.10. Which option should ColdChain choose? Show all steps.",hint:"NPV = C1 divided by (1+k) + C2 divided by (1+k) squared, where C = Revenue minus Cost per year",pmd_level:"D",criteria:{p1:"Correct annual profit for at least one option in both years",p2:"Correct NPV for both options: Lease approximately JD 121,488 and Buy approximately JD 135,537",m:"Both NPVs correct with clear recommendation Buy justified by comparison",d:"Both NPVs correct, recommendation justified, AND explains what the NPV difference means practically or identifies a limitation"}},
-  {part:"D",label:"NPV and Decision Trees",q:"Q11. Year 2 demand is uncertain: High probability 0.6 gives profit JD 85,000 or Low probability 0.4 gives profit JD 30,000. Calculate the expected NPV of Year 2 profit. Then explain in one sentence why a decision tree is more appropriate than a fixed NPV here.",pmd_level:"M",criteria:{p1:"Correct expected profit: 0.6 times 85000 plus 0.4 times 30000 = JD 63,000",p2:"Correct expected profit AND correct discounted NPV approximately JD 52,066",m:"Correct calculation AND clear explanation that decision tree captures uncertainty through probabilities whereas fixed NPV assumes certainty",d:null}},
-  {part:"E",label:"Short Conceptual Questions",q:"Q12. A company has a negative Cash-to-Cash cycle like Amazon at minus 73.7 days. Explain what this means in terms of cash flow timing and why it is a competitive advantage.",pmd_level:"P2",criteria:{p1:"States that customers pay before suppliers are paid",p2:"Explains timing AND explains competitive advantage: free working capital, no financing cost",m:null,d:null}},
-  {part:"E",label:"Short Conceptual Questions",q:"Q13. Zara sources trendy products from European factories and basic products from Asian factories. Using strategic fit, explain the logic.",pmd_level:"M",criteria:{p1:"States that trendy products need faster supply chains",p2:"Links trendy equals high uncertainty equals responsive Europe and basics equals low uncertainty equals efficient Asia",m:"Fully applies strategic fit: explains implied uncertainty for each product type and why the matched supply chain achieves fit",d:null}},
-  {part:"E",label:"Short Conceptual Questions",q:"Q14. A planner says we should always minimize inventory to cut costs. Using one course concept, explain when holding more inventory is actually the right decision.",pmd_level:"M",criteria:{p1:"Identifies a valid scenario where more inventory is needed",p2:"Names a specific concept such as safety stock or responsive supply chain and links it to a scenario",m:"Explains the trade-off between holding cost and service level or availability clearly using course terminology",d:null}},
-  {part:"E",label:"Short Conceptual Questions",q:"Q15. What is the difference between a pull process and a push process? Give one real example of each from a supply chain discussed in class.",pmd_level:"P2",criteria:{p1:"Correctly defines pull or push",p2:"Correctly defines both AND gives one valid real example for each",m:null,d:null}},
-  {part:"F",label:"Linear Programming Models",scenario:"Jordan Fresh Foods supplies packaged food to two markets: Amman D1=80,000 units/yr and Irbid D2=50,000 units/yr. Two factory sites: Site A in Zarqa capacity KA=90,000 fixed cost fA=JD200,000/yr and Site B in Mafraq capacity KB=70,000 fixed cost fB=JD150,000/yr. Shipping costs: cA1=JD3.50, cA2=JD4.20, cB1=JD5.00, cB2=JD2.80 per unit.",q:"Q16. Define the decision variables for this capacitated plant location model. Use the notation from class.",hint:"You need two types: a binary variable for each site open or not, and a continuous variable for each factory-market pair.",pmd_level:"P2",criteria:{p1:"Defines at least one binary variable yA or yB correctly",p2:"Defines all binary variables yA and yB AND all quantity variables xA1, xA2, xB1, xB2 with correct interpretation",m:null,d:null}},
-  {part:"F",label:"Linear Programming Models",q:"Q17. Write the objective function for this model. State what it minimizes and explain what each term represents.",pmd_level:"M",criteria:{p1:"Writes a correct objective function with at least the shipping cost terms",p2:"Complete objective function: minimize fA times yA plus fB times yB plus all cij times xij for all pairs",m:"Complete objective function with clear explanation of what each term means: fixed costs versus variable shipping costs",d:null}},
-  {part:"F",label:"Linear Programming Models",q:"Q18. Write ALL constraint equations for this model. For each constraint, write it mathematically and state in one sentence what it enforces.",hint:"You need: demand satisfaction constraints, capacity constraints, linking constraints connecting x and y variables, binary and non-negativity constraints.",pmd_level:"D",criteria:{p1:"Writes demand satisfaction constraints correctly",p2:"Writes demand and capacity constraints correctly",m:"Writes demand, capacity, and linking constraints correctly",d:"All constraints correct including linking constraints, binary constraints, and non-negativity, each with a clear explanation"}}
+const QS = [
+  {part:"A",label:"Supply Chain Fundamentals",level:"P1",
+   scenario:"ReadyMart is a large superstore chain selling groceries, electronics, and clothing across Jordan. Revenue per unit averages JD 8.50. Total supply chain cost averages JD 5.20 per unit.",
+   q:"Q1. Calculate the supply chain surplus per unit for ReadyMart.",
+   hint:"Supply Chain Surplus = Customer Value \u2212 Supply Chain Cost",
+   pass_criteria:"Student correctly calculates 8.50 \u2212 5.20 = JD 3.30 per unit.",
+   fail_reason:"The calculation is: 8.50 \u2212 5.20 = JD 3.30 per unit. Supply chain surplus = customer value minus total supply chain cost."},
+
+  {part:"A",label:"Supply Chain Fundamentals",level:"P2",
+   q:"Q2. For each decision, identify whether it is Strategic, Planning, or Operational and explain why in one sentence. (a) Signing a 5-year lease on a new warehouse in Aqaba. (b) Deciding how many units of tomato paste to stock for next quarter. (c) Approving the delivery route for tomorrow\u2019s truck to Irbid. (d) Choosing to outsource all last-mile delivery to a 3PL.",
+   pass_criteria:"All four correctly classified (a=Strategic, b=Planning, c=Operational, d=Strategic) with a brief reason for each. Three out of four with reasons is acceptable.",
+   fail_reason:"(a) Strategic \u2014 long-term network decision. (b) Planning \u2014 medium-term supply/demand decision. (c) Operational \u2014 daily execution decision. (d) Strategic \u2014 long-term structural decision. Each classification needs at least one sentence of reasoning."},
+
+  {part:"A",label:"Supply Chain Fundamentals",level:"M",
+   q:"Q3. ReadyMart sells salt (predictable demand, low margin) and the latest smartphone (unpredictable demand, high margin). Using the implied uncertainty spectrum, explain which product has higher implied demand uncertainty and what type of supply chain each product requires.",
+   pass_criteria:"Smartphone identified as higher uncertainty. Salt linked to efficient supply chain. Smartphone linked to responsive supply chain. Student explains WHY using implied uncertainty reasoning.",
+   fail_reason:"Smartphone has higher implied demand uncertainty because demand is unpredictable and customers expect availability. It needs a RESPONSIVE supply chain. Salt has low implied demand uncertainty with stable predictable demand. It needs an EFFICIENT supply chain focused on low cost and high utilization. Must explain the reasoning, not just label them."},
+
+  {part:"B",label:"Achieving Strategic Fit",level:"D",
+   scenario:"SwiftWear launches new fashion collections every 3 weeks, produces in small batches in Turkey (fast, expensive), and accepts stockouts. BasicThread sells plain white t-shirts year-round in fixed sizes, manufactures in bulk in Bangladesh (cheap, slow), and almost never stocks out.",
+   q:"Q4. Using the responsiveness spectrum and the implied uncertainty spectrum, describe where each company sits and explain whether each has achieved strategic fit.",
+   hint:"Consider what each company\u2019s customers need and whether the supply chain matches those needs.",
+   pass_criteria:"Both companies correctly placed on both spectrums with reasoning. Strategic fit assessed for both with evidence. Student discusses what would happen if they were misaligned.",
+   fail_reason:"SwiftWear = high implied uncertainty + responsive supply chain = strategic fit achieved. BasicThread = low implied uncertainty + efficient supply chain = strategic fit achieved. For Distinction: must also discuss consequences of misalignment e.g. if BasicThread used a responsive supply chain it would overpay for speed it does not need."},
+
+  {part:"B",label:"Achieving Strategic Fit",level:"M",
+   q:"Q5. SwiftWear decides to expand by selling trendy items AND basic plain items across online and physical stores. Explain what challenge this creates for strategic fit and what concept from the course addresses it.",
+   pass_criteria:"Names tailored supply chain as the solution. Explains the conflict between two different supply chain needs. Gives an example of how to apply both simultaneously.",
+   fail_reason:"The concept is TAILORED SUPPLY CHAIN. The challenge is that trendy items need a responsive supply chain while basics need an efficient one. A tailored supply chain applies different supply chain strategies to different product segments simultaneously, like Zara does with European factories for trendy and Asian for basics."},
+
+  {part:"B",label:"Achieving Strategic Fit",level:"M",
+   q:"Q6. SwiftWear\u2019s marketing team runs a flash sale without telling operations, causing a demand surge the warehouse cannot handle. Which scope of strategic fit was violated? What scope should the company be operating at?",
+   pass_criteria:"Names intrafunctional scope as violated. Names interfunctional scope as the correct scope. Explains what each means.",
+   fail_reason:"The violated scope is INTRAFUNCTIONAL \u2014 marketing and operations acted independently within the same firm. The correct scope is INTERFUNCTIONAL \u2014 all internal functions coordinate decisions. At interfunctional scope, marketing would coordinate with operations before running the flash sale."},
+
+  {part:"C",label:"Network Design and C2C",level:"D",
+   scenario:"FreshLink distributes fresh produce across Jordan. Data: demand from Irbid = 600,000 units/year, fixed cost of Irbid DC = JD 180,000/year, current cost from Amman = JD 0.65/unit, cost from Irbid DC = JD 0.30/unit, inventory turnover = 8.2, AR turnover = 12.5, AP turnover = 6.0.",
+   q:"Q7. Should FreshLink open the Irbid DC? Calculate the annual transportation cost savings and compare them to the fixed cost. Show your work and state your recommendation.",
+   pass_criteria:"Full calculation correct: saving = 0.35/unit, total saving = 210,000, net benefit = 30,000. Clear recommendation. Plus discusses at least one limitation or break-even condition.",
+   fail_reason:"Saving per unit = 0.65 \u2212 0.30 = JD 0.35. Total saving = 0.35 \u00d7 600,000 = JD 210,000. Net benefit = 210,000 \u2212 180,000 = JD 30,000. Recommend opening. For Distinction: add break-even volume (180,000 \u00f7 0.35 = 514,286 units) or a risk that could change the recommendation."},
+
+  {part:"C",label:"Network Design and C2C",level:"P1",
+   q:"Q8. Calculate FreshLink\u2019s Cash-to-Cash (C2C) cycle using the data provided.",
+   hint:"C2C = (365 \u00f7 Inventory Turnover) + (365 \u00f7 AR Turnover) \u2212 (365 \u00f7 AP Turnover)",
+   pass_criteria:"Correct formula applied. Correct result: 365/8.2 + 365/12.5 \u2212 365/6.0 = 44.51 + 29.20 \u2212 60.83 = 12.88 days.",
+   fail_reason:"Use 365 divided by each turnover ratio, not the raw numbers. DIO = 365/8.2 = 44.51 days. DSO = 365/12.5 = 29.20 days. DPO = 365/6.0 = 60.83 days. C2C = 44.51 + 29.20 \u2212 60.83 = 12.88 days."},
+
+  {part:"C",label:"Network Design and C2C",level:"M",
+   q:"Q9. FreshLink wants to improve its C2C cycle. Name two specific actions \u2014 one that reduces the inventory period and one that improves the accounts payable period. For each, state one specific trade-off or risk.",
+   pass_criteria:"One valid action for inventory period with a specific trade-off. One valid action for AP period with a specific trade-off. Trade-offs must be specific.",
+   fail_reason:"For inventory: e.g. reduce batch sizes or improve forecasting (trade-off: higher stockout risk or higher ordering cost). For AP: e.g. negotiate longer payment terms (trade-off: suppliers may increase prices or reduce service priority). Generic trade-offs are not sufficient for Merit."},
+
+  {part:"D",label:"NPV and Decision Trees",level:"D",
+   scenario:"ColdChain Logistics: k = 0.10. Annual revenue = JD 120,000. Option 1 Lease: JD 50,000/year cost. Option 2 Buy: JD 80,000 one-time cost Year 1 only, no cost Year 2. Cash flows at end of each year.",
+   q:"Q10. Calculate the NPV for both options over 2 years using k = 0.10. Which option should ColdChain choose? Show all steps.",
+   hint:"NPV = C\u2081/(1+k)\u00b9 + C\u2082/(1+k)\u00b2 where C = Revenue \u2212 Cost for that year",
+   pass_criteria:"Correct NPV for both: Lease = JD 121,487, Buy = JD 135,537. Correct recommendation (Buy). Plus a comment on what the difference means or a limitation.",
+   fail_reason:"Lease: Year1 profit=70,000, Year2 profit=70,000. NPV = 70000/1.1 + 70000/1.21 = 63,636 + 57,851 = JD 121,487. Buy: Year1 profit=40,000, Year2 profit=120,000. NPV = 40000/1.1 + 120000/1.21 = 36,364 + 99,174 = JD 135,537. Choose Buy. BOTH years must be discounted."},
+
+  {part:"D",label:"NPV and Decision Trees",level:"M",
+   q:"Q11. Year 2 demand is uncertain: High (prob 0.6, profit JD 85,000) or Low (prob 0.4, profit JD 30,000). Calculate the expected NPV of Year 2 profit. Then explain why a decision tree is more appropriate than a fixed NPV here.",
+   pass_criteria:"Correct expected profit: JD 63,000. Correct discounted NPV: JD 52,066. Clear explanation about uncertainty vs certainty.",
+   fail_reason:"Expected profit = (0.6 \u00d7 85,000) + (0.4 \u00d7 30,000) = 51,000 + 12,000 = JD 63,000. Discounted NPV = 63,000 \u00f7 1.21 = JD 52,066. A decision tree is more appropriate because it explicitly models uncertainty with probabilities, whereas fixed NPV assumes one certain outcome."},
+
+  {part:"E",label:"Short Conceptual Questions",level:"P2",
+   q:"Q12. A company has a negative Cash-to-Cash cycle like Amazon at \u221273.7 days. Explain what this means in terms of cash flow timing and why it is a competitive advantage.",
+   pass_criteria:"Explains customers pay before suppliers are paid. Identifies at least one competitive advantage: free working capital, reduced financing costs, or cash available for investment.",
+   fail_reason:"Negative C2C means Amazon receives payment from customers 73.7 days BEFORE paying its suppliers. This is an advantage because Amazon uses that cash for free \u2014 reducing borrowing costs and giving capital to invest in growth without needing external financing."},
+
+  {part:"E",label:"Short Conceptual Questions",level:"M",
+   q:"Q13. Zara sources trendy products from European factories and basic products from Asian factories. Using strategic fit, explain the logic.",
+   pass_criteria:"Trendy products linked to high uncertainty and responsive supply chain (European factories). Basic products linked to low uncertainty and efficient supply chain (Asian factories). Both explained using strategic fit logic.",
+   fail_reason:"Trendy items have HIGH implied demand uncertainty so they need a RESPONSIVE supply chain \u2014 European factories are fast. Basic items have LOW uncertainty so they need an EFFICIENT supply chain \u2014 Asian factories are cheap. Each sourcing decision matches the product\u2019s implied uncertainty = strategic fit achieved."},
+
+  {part:"E",label:"Short Conceptual Questions",level:"M",
+   q:"Q14. A supply chain planner says we should always minimize inventory to cut costs. Using one specific concept from the course, explain when holding more inventory is actually the right decision.",
+   pass_criteria:"Names a specific course concept (safety stock, responsive supply chain, uncertainty buffer). Explains a valid scenario. Connects concept to scenario correctly.",
+   fail_reason:"Name a concept such as SAFETY STOCK or the RESPONSIVENESS-EFFICIENCY TRADE-OFF. When demand or supply uncertainty is high, holding more inventory reduces stockout risk and improves service level. The cost of lost sales can exceed inventory holding cost, making more inventory the right decision despite higher costs."},
+
+  {part:"E",label:"Short Conceptual Questions",level:"P2",
+   q:"Q15. What is the difference between a pull process and a push process? Give one real example of each from a supply chain discussed in class.",
+   pass_criteria:"Pull correctly defined as reactive based on actual customer orders. Push correctly defined as speculative based on forecasts. One valid real example for each.",
+   fail_reason:"PULL = process starts only when a customer places an order (e.g. Dell building a PC to order, Ethan Allen custom furniture). PUSH = process starts based on a forecast before any customer orders (e.g. L.L. Bean producing seasonal inventory months in advance). Both definition and example needed."},
+
+  {part:"F",label:"Linear Programming Models",level:"P1",
+   scenario:"Jordan Fresh Foods: Amman (D\u2081=80,000 units/yr), Irbid (D\u2082=50,000 units/yr). Site A Zarqa (K_A=90,000, f_A=JD200,000/yr), Site B Mafraq (K_B=70,000, f_B=JD150,000/yr). Costs: c_A1=3.50, c_A2=4.20, c_B1=5.00, c_B2=2.80 JD/unit.",
+   q:"Q16. Define the decision variables for this capacitated plant location model.",
+   hint:"Two types needed: a binary variable for each site and a continuous variable for each factory-market pair.",
+   pass_criteria:"Binary variables y_A and y_B correctly defined. Continuous variables x_A1, x_A2, x_B1, x_B2 correctly defined as quantity shipped.",
+   fail_reason:"y_A = 1 if Site A (Zarqa) is open, 0 otherwise. y_B = 1 if Site B (Mafraq) is open, 0 otherwise. x_A1 = units from Site A to Amman, x_A2 = units from Site A to Irbid, x_B1 = units from Site B to Amman, x_B2 = units from Site B to Irbid. Both variable types must be defined."},
+
+  {part:"F",label:"Linear Programming Models",level:"M",
+   q:"Q17. Write the objective function for this model. State what it minimizes and explain what each term represents.",
+   pass_criteria:"Complete correct objective function: Min Z = 200,000y_A + 150,000y_B + 3.50x_A1 + 4.20x_A2 + 5.00x_B1 + 2.80x_B2. Clear explanation of fixed vs variable cost terms.",
+   fail_reason:"Min Z = 200,000\u00b7y_A + 150,000\u00b7y_B + 3.5\u00b7x_A1 + 4.2\u00b7x_A2 + 5.0\u00b7x_B1 + 2.8\u00b7x_B2. First two terms = fixed costs paid only if site opens. Last four terms = variable shipping costs per unit. All six terms must be present."},
+
+  {part:"F",label:"Linear Programming Models",level:"D",
+   q:"Q18. Write ALL constraint equations for this model. For each constraint, write it mathematically and state in one sentence what it enforces.",
+   hint:"You need: demand constraints, capacity constraints, linking constraints, binary and non-negativity constraints.",
+   pass_criteria:"All five types present and correct: demand, capacity, linking (x \u2264 K\u00b7y), binary, non-negativity. Each with an explanation.",
+   fail_reason:"(1) DEMAND: x_A1+x_B1=80,000 and x_A2+x_B2=50,000. (2) CAPACITY: x_A1+x_A2\u226490,000 and x_B1+x_B2\u226470,000. (3) LINKING: x_A1+x_A2\u226490,000\u00b7y_A and x_B1+x_B2\u226470,000\u00b7y_B. (4) BINARY: y_A,y_B\u2208{0,1}. (5) NON-NEGATIVITY: all x_ij\u22650. All five types needed with explanations."}
 ];
 
-let state = {name:'', studentId:'', currentQ:0, answers:{}, attemptId:null};
+let ST = {name:'',sid:'',q:0,ans:{},aid:null,timerInterval:null,extraChecker:null};
 
-async function init() {
-  try {
-    const {data, error} = await sb.from('exam_settings').select('is_open').eq('id',1).single();
-    if (error || !data || !data.is_open) { show('screen-closed'); return; }
-    show('screen-login');
-  } catch(e) {
-    show('screen-closed');
-  }
+async function init(){
+  try{
+    const {data,error} = await sb.from('exam_settings').select('is_open,exam_minutes').eq('id',1).single();
+    if(error||!data||!data.is_open){show('s-closed');return;}
+    const mins = data.exam_minutes || 65;
+    document.getElementById('exam-info').textContent = mins + ' minutes \u00b7 18 questions \u00b7 One attempt only \u00b7 Calculators permitted';
+    show('s-login');
+  }catch(e){show('s-closed');}
 }
 
-async function doLogin() {
+async function doLogin(){
   const name = document.getElementById('inp-name').value.trim();
   const sid  = document.getElementById('inp-id').value.trim();
-  const err  = document.getElementById('login-error');
+  const err  = document.getElementById('login-err');
   err.style.display = 'none';
-  if (!name || !sid) { err.innerHTML = 'Please enter your full name and student ID.'; err.style.display='block'; return; }
+  if(!name||!sid){err.innerHTML='Please enter your full name and student ID.';err.style.display='block';return;}
   const btn = document.getElementById('btn-login');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Loading&#8230;';
-  try {
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Loading&#8230;';
+  try{
     const {data:prev} = await sb.from('exam_attempts').select('id,grade,created_at,status').eq('student_id',sid).order('created_at',{ascending:false});
-    const completed = prev ? prev.filter(a=>a.status==='completed') : [];
-    if (completed.length > 0) {
-      const a = completed[0];
-      const gl = {D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
-      err.innerHTML = 'You have already submitted this exam on '+new Date(a.created_at).toLocaleDateString()+'.<br>Your grade was: <strong>'+(gl[a.grade]||a.grade)+'</strong>.<br>Only one attempt is allowed.';
-      err.style.display='block';
-      btn.disabled=false; btn.innerHTML='Start exam &#8594;'; return;
+    const done = prev ? prev.filter(a=>a.status==='completed') : [];
+    if(done.length>0){
+      const a=done[0];
+      const gl={D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
+      err.innerHTML='You have already submitted this exam on '+new Date(a.created_at).toLocaleDateString()+'.<br>Your grade: <strong>'+(gl[a.grade]||a.grade)+'</strong>. Only one attempt is allowed.';
+      err.style.display='block'; btn.disabled=false; btn.innerHTML='Start exam &#8594;'; return;
     }
-    const {data:newA} = await sb.from('exam_attempts').insert({student_name:name,student_id:sid,attempt_number:1,grade:null,status:'in_progress'}).select().single();
-    state.name=name; state.studentId=sid; state.attemptId=newA?.id; state.currentQ=0; state.answers={};
-    show('screen-exam'); renderQ();
-  } catch(e) {
-    err.innerHTML='Connection error. Please try again.'; err.style.display='block';
-  }
+    // Get exam settings for timer
+    const {data:settings} = await sb.from('exam_settings').select('exam_minutes,extra_minutes').eq('id',1).single();
+    const examMins = settings?.exam_minutes || 65;
+    const extraMins = settings?.extra_minutes || 0;
+
+    const {data:na} = await sb.from('exam_attempts').insert({student_name:name,student_id:sid,grade:null,status:'in_progress'}).select().single();
+    ST.name=name; ST.sid=sid; ST.aid=na?.id; ST.q=0; ST.ans={};
+    show('s-exam'); renderQ();
+    startTimer(examMins, extraMins);
+  }catch(e){err.innerHTML='Connection error. Please try again.';err.style.display='block';}
   btn.disabled=false; btn.innerHTML='Start exam &#8594;';
 }
 
-function renderQ() {
-  const q = QUESTIONS[state.currentQ];
-  const total = QUESTIONS.length;
-  document.getElementById('exam-name').textContent = state.name;
-  document.getElementById('exam-part').textContent = 'Part '+q.part+' — '+q.label;
-  document.getElementById('exam-counter').textContent = (state.currentQ+1)+' / '+total;
-  document.getElementById('exam-progress').style.width = Math.round(((state.currentQ+1)/total)*100)+'%';
-  let html = '';
-  if (q.scenario) html += '<div class="scenario">'+q.scenario+'</div>';
-  html += '<div class="q-meta">Question '+(state.currentQ+1)+' &middot; Part '+q.part+' &middot; '+q.pmd_level+' level</div>';
-  html += '<div class="q-text">'+q.q+'</div>';
-  if (q.hint) html += '<div class="hint">'+q.hint+'</div>';
-  html += '<textarea id="ans" placeholder="Write your answer here&#8230;" rows="6">'+escHtml(state.answers[state.currentQ]||'')+'</textarea>';
-  document.getElementById('exam-question').innerHTML = html;
-  document.getElementById('ans').addEventListener('input', e=>{ state.answers[state.currentQ]=e.target.value; });
-  document.getElementById('btn-prev').style.visibility = state.currentQ>0?'visible':'hidden';
-  const nb = document.getElementById('btn-next');
-  nb.textContent = state.currentQ<total-1 ? 'Next \u2192' : 'Submit exam \u2192';
+function startTimer(examMins, startingExtra){
+  let secsLeft = examMins * 60;
+  let lastExtra = startingExtra || 0;
+  let warned10 = false;
+  const el = document.getElementById('timer');
+
+  // Check for extra time every 15 seconds
+  ST.extraChecker = setInterval(async ()=>{
+    try{
+      const {data} = await sb.from('exam_settings').select('extra_minutes').eq('id',1).single();
+      const newExtra = data?.extra_minutes || 0;
+      if(newExtra > lastExtra){
+        const diff = newExtra - lastExtra;
+        secsLeft += diff * 60;
+        lastExtra = newExtra;
+        warned10 = false;
+        const banner = document.getElementById('time-banner');
+        banner.textContent = '\u23F1 ' + diff + ' extra minute' + (diff>1?'s have':' has') + ' been added by your instructor!';
+        banner.style.display = 'block';
+        setTimeout(()=>{ banner.style.display='none'; }, 8000);
+      }
+    }catch(e){}
+  }, 15000);
+
+  ST.timerInterval = setInterval(()=>{
+    secsLeft--;
+    const m = Math.floor(secsLeft/60);
+    const s = secsLeft % 60;
+    el.textContent = '\u23F1 ' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    el.className = 'timer';
+    if(secsLeft <= 600 && secsLeft > 60) el.className = 'timer timer-warn';
+    if(secsLeft <= 60) el.className = 'timer timer-danger';
+    if(secsLeft <= 600 && !warned10){
+      warned10 = true;
+      alert('\u26A0\uFE0F 10 minutes remaining! Please review your answers and submit.');
+    }
+    if(secsLeft <= 0){
+      clearInterval(ST.timerInterval);
+      clearInterval(ST.extraChecker);
+      el.textContent = '\u23F1 00:00';
+      alert('Time is up! Your exam will now be submitted automatically.');
+      const ta = document.getElementById('ans');
+      if(ta) ST.ans[ST.q] = ta.value;
+      submitExam();
+    }
+  }, 1000);
 }
 
-function navigate(dir) {
-  const ta=document.getElementById('ans');
-  if(ta) state.answers[state.currentQ]=ta.value;
-  if(dir===1 && state.currentQ===QUESTIONS.length-1){submitExam();return;}
-  state.currentQ=Math.max(0,Math.min(QUESTIONS.length-1,state.currentQ+dir));
+function renderQ(){
+  const q = QS[ST.q], t = QS.length;
+  document.getElementById('e-name').textContent = ST.name;
+  document.getElementById('e-part').textContent = 'Part ' + q.part + ' \u2014 ' + q.label;
+  document.getElementById('e-cnt').textContent = (ST.q+1) + ' / ' + t;
+  document.getElementById('e-prog').style.width = Math.round(((ST.q+1)/t)*100) + '%';
+  let h = '';
+  if(q.scenario) h += '<div class="scenario">' + q.scenario + '</div>';
+  h += '<div class="qmeta">Q' + (ST.q+1) + ' \u00b7 Part ' + q.part + ' \u00b7 ' + q.level + ' level</div>';
+  h += '<div class="qtext">' + q.q + '</div>';
+  if(q.hint) h += '<div class="hint">' + q.hint + '</div>';
+  h += '<textarea id="ans" placeholder="Write your answer here\u2026" rows="6">' + esc(ST.ans[ST.q]||'') + '</textarea>';
+  document.getElementById('e-q').innerHTML = h;
+  const ta = document.getElementById('ans');
+  ta.addEventListener('input', e=>{ ST.ans[ST.q]=e.target.value; });
+  // Prevent paste
+  ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
+  document.getElementById('btn-prev').style.visibility = ST.q>0?'visible':'hidden';
+  document.getElementById('btn-next').textContent = ST.q<t-1?'Next \u2192':'Submit exam \u2192';
+}
+
+function nav(d){
+  const ta = document.getElementById('ans');
+  if(ta) ST.ans[ST.q] = ta.value;
+  if(d===1 && ST.q===QS.length-1){ submitExam(); return; }
+  ST.q = Math.max(0, Math.min(QS.length-1, ST.q+d));
   renderQ();
 }
 
-async function submitExam() {
-  show('screen-grading');
-  const results=[];
-  for(let i=0;i<QUESTIONS.length;i++){
-    document.getElementById('grading-msg').textContent='Grading question '+(i+1)+' of '+QUESTIONS.length+'&#8230;';
-    document.getElementById('grading-progress').style.width=Math.round(((i+1)/QUESTIONS.length)*100)+'%';
-    const r = await gradeOne(QUESTIONS[i], state.answers[i]||'', i);
-    results.push(r);
-    await new Promise(res=>setTimeout(res,200));
+async function submitExam(){
+  if(ST.timerInterval){ clearInterval(ST.timerInterval); ST.timerInterval=null; }
+  if(ST.extraChecker){ clearInterval(ST.extraChecker); ST.extraChecker=null; }
+  show('s-grading');
+  const results = [];
+  for(let i=0;i<QS.length;i++){
+    document.getElementById('g-msg').textContent = 'Grading question ' + (i+1) + ' of ' + QS.length + '\u2026';
+    document.getElementById('g-prog').style.width = Math.round(((i+1)/QS.length)*100) + '%';
+    results.push(await gradeOne(QS[i], ST.ans[i]||'', i));
+    await new Promise(r=>setTimeout(r,200));
   }
-  const grade=computeGrade(results);
-  if(state.attemptId){
+  const grade = calcGrade(results);
+  if(ST.aid){
     try{
-      await sb.from('exam_attempts').update({grade,status:'completed',answers:state.answers,results,completed_at:new Date().toISOString()}).eq('id',state.attemptId);
+      await sb.from('exam_attempts').update({grade,status:'completed',answers:ST.ans,results,completed_at:new Date().toISOString()}).eq('id',ST.aid);
     }catch(e){console.error('Save error',e);}
   }
-  showResults(grade,results);
+  showResults(grade, results);
 }
 
-async function gradeOne(q, ans, idx) {
-  const notApplicable = 'Not applicable for this question - auto-pass this level';
+async function gradeOne(q, ans, idx){
   const prompt =
-    'You are grading a supply chain management exam answer. Be fair and encouraging.\n\n' +
+    'You are grading a supply chain management exam. The student may answer in English or Arabic \u2014 evaluate in whichever language they used.\n\n' +
     'QUESTION: ' + q.q + '\n' +
-    (q.hint ? 'HINT GIVEN TO STUDENT: ' + q.hint + '\n' : '') +
-    (q.scenario ? 'CONTEXT GIVEN TO STUDENT: ' + q.scenario + '\n' : '') +
-    '\nGRADING CRITERIA:\n' +
-    'P1 (basic pass): ' + q.criteria.p1 + '\n' +
-    'P2 (full pass): ' + q.criteria.p2 + '\n' +
-    'Merit: ' + (q.criteria.m || notApplicable) + '\n' +
-    'Distinction: ' + (q.criteria.d || notApplicable) + '\n' +
+    (q.hint ? 'HINT GIVEN: ' + q.hint + '\n' : '') +
+    (q.scenario ? 'CONTEXT: ' + q.scenario + '\n' : '') +
+    '\nPASS CRITERIA (' + q.level + ' level): ' + q.pass_criteria + '\n' +
+    'IF FAILED, TELL STUDENT: ' + q.fail_reason + '\n' +
     '\nSTUDENT ANSWER: ' + (ans || '(no answer provided)') + '\n' +
-    '\nRULES:\n' +
-    '1. If Merit says auto-pass, set passed_m to true if passed_p2 is true\n' +
-    '2. If Distinction says auto-pass, set passed_d to true if passed_m is true\n' +
-    '3. A student who scores P2 on a P2-target question should also pass Merit and Distinction automatically\n' +
-    '4. Write feedback as one or two plain sentences with no quotes or special characters\n' +
-    '\nRespond with ONLY this JSON and absolutely nothing else:\n' +
-    '{"passed_p1":true,"passed_p2":false,"passed_m":false,"passed_d":false,"feedback":"your feedback here"}';
+    '\nRespond ONLY with this exact JSON, nothing else:\n' +
+    '{"passed":true,"feedback":"Brief positive feedback in same language as student answer"}\n' +
+    'or\n' +
+    '{"passed":false,"feedback":"Explain what was missing and what they needed to say, in same language as student answer"}';
 
-  try {
-    const resp = await fetch('https://pzrnkocekbusxhozpiee.supabase.co/functions/v1/grade-answer', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        'apikey': SUPABASE_ANON_KEY
-      },
-      body: JSON.stringify({ prompt })
+  try{
+    const resp = await fetch(EDGE_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt})
     });
-
-    if (!resp.ok) {
-      const errText = await resp.text();
-      console.error('API HTTP error Q'+(idx+1)+':', resp.status, errText);
-      return fallback(idx, 'API error '+resp.status+'. Your answer was saved.');
+    if(!resp.ok){
+      const t = await resp.text();
+      console.error('Edge error Q'+(idx+1)+':', resp.status, t);
+      return {idx, passed:false, feedback:'Grading error ('+resp.status+'). Answer was saved.'};
     }
-
     const data = await resp.json();
-    const raw = data && data.content && data.content[0] && data.content[0].text ? data.content[0].text : '';
-    console.log('Q'+(idx+1)+' raw response:', raw);
-
-    if (!raw) {
-      console.error('Empty response for Q'+(idx+1));
-      return fallback(idx, 'Empty response from grader. Your answer was saved.');
-    }
-
-    const jsonMatch = raw.match(/\{[^{}]*\}/);
-    if (!jsonMatch) {
-      console.error('No JSON found Q'+(idx+1)+':', raw);
-      return fallback(idx, 'Could not parse grade. Your answer was saved.');
-    }
-
-    let parsed;
-    try { parsed = JSON.parse(jsonMatch[0]); }
-    catch(pe) {
-      console.error('JSON parse error Q'+(idx+1)+':', pe, jsonMatch[0]);
-      return fallback(idx, 'Grade parse error. Your answer was saved.');
-    }
-
-    const p1 = parsed.passed_p1 === true;
-    const p2 = parsed.passed_p2 === true;
-    const m  = parsed.passed_m  === true;
-    const d  = parsed.passed_d  === true;
-    const fb = (typeof parsed.feedback === 'string' && parsed.feedback.length > 3)
-      ? parsed.feedback
-      : 'Answer recorded. See instructor for detailed feedback.';
-
-    return {idx, passed_p1:p1, passed_p2:p2, passed_m:m, passed_d:d, feedback:fb};
-
-  } catch(e) {
-    console.error('gradeOne exception Q'+(idx+1)+':', e);
-    return fallback(idx, 'Network error. Your answer was saved.');
+    const raw = data?.content?.[0]?.text || '';
+    console.log('Q'+(idx+1)+' response:', raw);
+    const m = raw.match(/\{[\s\S]*?\}/);
+    if(!m) return {idx, passed:false, feedback:'Could not parse grade. Answer was saved.'};
+    const p = JSON.parse(m[0]);
+    return {idx, passed:p.passed===true, feedback:typeof p.feedback==='string'&&p.feedback.length>2?p.feedback:'See instructor for feedback.'};
+  }catch(e){
+    console.error('gradeOne error Q'+(idx+1)+':', e);
+    return {idx, passed:false, feedback:'Network error. Answer was saved.'};
   }
 }
 
-function fallback(idx, msg) {
-  return {idx, passed_p1:false, passed_p2:false, passed_m:false, passed_d:false, feedback:msg};
-}
-
-function computeGrade(results) {
-  const pQs = QUESTIONS.map((q,i)=>({i,l:q.pmd_level})).filter(q=>q.l==='P1'||q.l==='P2');
-  const mQs = QUESTIONS.map((q,i)=>({i,l:q.pmd_level})).filter(q=>q.l==='M');
-  const dQs = QUESTIONS.map((q,i)=>({i,l:q.pmd_level})).filter(q=>q.l==='D');
-  if(!pQs.every(q=>results[q.i]&&results[q.i].passed_p2)) return 'U';
-  if(!mQs.every(q=>results[q.i]&&results[q.i].passed_m))  return 'P';
-  if(!dQs.every(q=>results[q.i]&&results[q.i].passed_d))  return 'M';
+function calcGrade(results){
+  const pIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='P1'||QS[i].level==='P2');
+  const mIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='M');
+  const dIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='D');
+  const allPass = arr => arr.every(i=>results[i]&&results[i].passed);
+  if(!allPass(pIdx)) return 'U';
+  if(!allPass(mIdx)) return 'P';
+  if(!allPass(dIdx)) return 'M';
   return 'D';
 }
 
-function showResults(grade, results) {
-  show('screen-results');
+function showResults(grade, results){
+  show('s-results');
   const gl={D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
   const gc={D:'#085041',M:'#0C447C',P:'#633806',U:'#C00000'};
   const gs={
-    D:'Excellent work. You demonstrated distinction-level understanding across all criteria.',
-    M:'Good work. You met all pass and merit criteria. Review the distinction-level questions to improve.',
-    P:'You passed. Focus on the merit and distinction questions to strengthen your understanding.',
-    U:'Some foundational questions were not fully answered. Review the feedback and speak with your instructor.'
+    D:'Excellent \u2014 you demonstrated distinction-level understanding across all questions.',
+    M:'Good work \u2014 you met all pass and merit criteria. Review the distinction questions below.',
+    P:'You passed \u2014 review the merit and distinction questions below to improve.',
+    U:'Some foundational questions were not fully answered. Review the feedback below and speak with your instructor.'
   };
-  document.getElementById('res-name').textContent = state.name+' \u00b7 '+state.studentId;
-  document.getElementById('res-headline').textContent = 'Overall grade: '+gl[grade];
-  document.getElementById('res-sub').textContent = gs[grade];
-  document.getElementById('res-grade-big').textContent = grade;
-  document.getElementById('res-grade-big').style.color = gc[grade];
-  const tl = r => r.passed_d?'D':r.passed_m?'M':r.passed_p2?'P2':r.passed_p1?'P1':'U';
-  document.getElementById('res-detail').innerHTML = results.map((r,i)=>{
-    const q=QUESTIONS[i];
-    const t=tl(r);
-    const pass=t!=='U';
-    const fb = (r.feedback && r.feedback !== 'undefined' && r.feedback.length > 3) ? r.feedback : 'See instructor for feedback on this question.';
-    return '<div class="result-item">'+
-      '<div class="icon '+(pass?'icon-pass':'icon-fail')+'">'+(pass?'&#10003;':'&#10007;')+'</div>'+
+  document.getElementById('r-name').textContent = ST.name + ' \u00b7 ' + ST.sid;
+  document.getElementById('r-head').textContent = 'Overall grade: ' + gl[grade];
+  document.getElementById('r-sub').textContent = gs[grade];
+  document.getElementById('r-grade').textContent = grade;
+  document.getElementById('r-grade').style.color = gc[grade];
+
+  const levelLabel = l => l; // P1, P2, M, D as-is
+
+  document.getElementById('r-detail').innerHTML = results.map((r,i)=>{
+    const q = QS[i];
+    const fb = r.feedback&&r.feedback!=='undefined'&&r.feedback.length>2 ? r.feedback : 'See instructor for feedback.';
+    const badgeLabel = r.passed ? 'Earned ' + levelLabel(q.level) : 'Did not earn ' + levelLabel(q.level);
+    const badgeClass = r.passed ? 'bd' : 'bu';
+    return '<div class="ritem">'+
+      '<div class="dot '+(r.passed?'dot-ok':'dot-no')+'">'+(r.passed?'&#10003;':'&#10007;')+'</div>'+
       '<div style="flex:1">'+
-        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">'+
-          '<span style="font-size:13px;font-weight:600">Q'+(i+1)+' &mdash; Part '+q.part+'</span>'+
-          '<span class="badge badge-'+t+'">Achieved: '+t+'</span>'+
-          '<span style="font-size:12px;color:var(--text3)">Target: '+q.pmd_level+'</span>'+
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">'+
+          '<span style="font-size:13px;font-weight:600">Q'+(i+1)+' \u2014 Part '+q.part+'</span>'+
+          '<span class="badge '+badgeClass+'">'+badgeLabel+'</span>'+
         '</div>'+
-        '<div style="font-size:13px;color:var(--text2)">'+escHtml(fb)+'</div>'+
+        (r.passed
+          ?'<div class="pass-box">&#10003; '+esc(fb)+'</div>'
+          :'<div class="miss-box"><strong>What you missed:</strong> '+esc(fb)+'</div>'
+        )+
       '</div>'+
     '</div>';
   }).join('');
 }
 
-function show(id) {
-  ['screen-closed','screen-login','screen-exam','screen-grading','screen-results']
-    .forEach(s=>{ document.getElementById(s).style.display=s===id?'block':'none'; });
+function show(id){
+  ['s-closed','s-login','s-exam','s-grading','s-results'].forEach(s=>{
+    document.getElementById(s).style.display = s===id?'block':'none';
+  });
 }
-
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 init();
 </script>
