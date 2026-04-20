@@ -6,354 +6,352 @@
 <title>SCM 106321 — Instructor Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#ffffff;--bg2:#f8f8f7;--bg3:#f2f1ef;
-    --text:#1a1a1a;--text2:#595959;--text3:#888;
-    --border:#e0ddd8;--border2:#ccc;
-    --blue:#1F4E79;--blue-light:#D6E4F0;
-    --green:#1B5E20;--green-light:#E8F5E9;
-    --red:#C00000;--red-light:#FCE4E4;
-    --amber:#633806;--amber-light:#FAEEDA;
-    --radius:10px;--radius-sm:6px;
-  }
-  @media(prefers-color-scheme:dark){
-    :root{--bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;--text:#f0f0f0;--text2:#aaa;--text3:#666;--border:#3a3a3a;--border2:#444;--blue-light:#0c2d47;--green-light:#0d2e10;--red-light:#3a0000;--amber-light:#2a1500;}
-  }
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg3);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
-  .page{max-width:960px;margin:0 auto;padding:1.5rem 1rem 3rem}
-  .card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
-  h1{font-size:22px;font-weight:600;margin-bottom:4px}
-  h2{font-size:18px;font-weight:600;margin-bottom:12px}
-  h3{font-size:15px;font-weight:600;margin-bottom:8px}
-  .subtitle{color:var(--text2);font-size:14px}
-  input{width:100%;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text)}
-  input:focus{outline:none;border-color:var(--blue)}
-  .btn{border:1px solid var(--border2);background:var(--bg);color:var(--text);padding:8px 18px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.15s}
-  .btn:hover{background:var(--bg2)}
-  .btn-primary{background:var(--text);color:var(--bg);border-color:transparent}
-  .btn-primary:hover{opacity:0.85}
-  .btn-danger{background:var(--red);color:#fff;border-color:transparent}
-  .btn-danger:hover{opacity:0.85}
-  .btn-success{background:var(--green);color:#fff;border-color:transparent}
-  .btn-success:hover{opacity:0.85}
-  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
-  .badge-D{background:var(--green-light);color:var(--green)}
-  .badge-M{background:var(--blue-light);color:var(--blue)}
-  .badge-P,.badge-P1,.badge-P2{background:var(--amber-light);color:var(--amber)}
-  .badge-U{background:var(--red-light);color:var(--red)}
-  .badge-open{background:var(--green-light);color:var(--green)}
-  .badge-closed{background:var(--red-light);color:var(--red)}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th{text-align:left;padding:9px 12px;border-bottom:2px solid var(--border);font-weight:600;font-size:13px;color:var(--text2);white-space:nowrap}
-  td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:var(--bg2)}
-  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1rem}
-  .stat{background:var(--bg2);border-radius:var(--radius-sm);padding:12px;text-align:center}
-  .stat-num{font-size:28px;font-weight:700;line-height:1}
-  .stat-label{font-size:12px;color:var(--text2);margin-top:4px}
-  .toggle-row{display:flex;align-items:center;gap:14px}
-  .toggle{position:relative;width:52px;height:28px;cursor:pointer}
-  .toggle input{opacity:0;width:0;height:0;position:absolute}
-  .toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:14px;transition:0.3s}
-  .toggle-slider:before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:0.3s}
-  .toggle input:checked+.toggle-slider{background:var(--green)}
-  .toggle input:checked+.toggle-slider:before{transform:translateX(24px)}
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:100;display:none}
-  .modal{background:var(--bg);border-radius:var(--radius);padding:1.5rem;max-width:640px;width:90%;max-height:80vh;overflow-y:auto}
-  .detail-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px}
-  .detail-item:last-child{border-bottom:none}
-  .check{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;font-weight:700}
-  .check-pass{background:var(--green-light);color:var(--green)}
-  .check-fail{background:var(--red-light);color:var(--red)}
-  .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--text);border-radius:50%;animation:spin 0.7s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  label{font-size:14px;font-weight:500;margin-bottom:4px;display:block}
-  .form-group{margin-bottom:1rem}
-  .alert{padding:10px 14px;border-radius:var(--radius-sm);font-size:14px;margin-bottom:1rem}
-  .alert-error{background:var(--red-light);color:var(--red);border:1px solid var(--red)}
-  .filter-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
-  .filter-row select{border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 10px;font-size:14px;background:var(--bg);color:var(--text);font-family:inherit}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#f8f8f7;--bg3:#f2f1ef;
+  --text:#1a1a1a;--text2:#595959;--text3:#999;
+  --border:#e0ddd8;--border2:#ccc;
+  --blue:#1F4E79;--blue-bg:#D6E4F0;
+  --green:#1B5E20;--green-bg:#E8F5E9;
+  --red:#C00000;--red-bg:#FCE4E4;
+  --amber:#633806;--amber-bg:#FAEEDA;
+  --r:10px;--rs:6px
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
+  --text:#f0f0f0;--text2:#aaa;--text3:#666;
+  --border:#3a3a3a;--border2:#555;
+  --blue-bg:#0c2d47;--green-bg:#0d2e10;--red-bg:#3a0000;--amber-bg:#2a1500
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg3);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
+.wrap{max-width:1000px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+h1{font-size:22px;font-weight:600;margin-bottom:4px}
+h2{font-size:18px;font-weight:600;margin-bottom:10px}
+h3{font-size:15px;font-weight:600;margin-bottom:8px}
+.sub{color:var(--text2);font-size:14px}
+input{width:100%;border:1px solid var(--border2);border-radius:var(--rs);padding:9px 12px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text)}
+input:focus{outline:none;border-color:var(--blue)}
+.btn{border:1px solid var(--border2);background:var(--bg);color:var(--text);padding:8px 18px;border-radius:var(--rs);cursor:pointer;font-size:14px;font-family:inherit;transition:all .15s}
+.btn:hover{background:var(--bg2)}
+.btn-p{background:var(--text);color:var(--bg);border-color:transparent}
+.btn-p:hover{opacity:.85}
+.btn-green{background:var(--green);color:#fff;border-color:transparent}
+.btn-green:hover{opacity:.85}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.bd{background:var(--green-bg);color:var(--green)}
+.bm{background:var(--blue-bg);color:var(--blue)}
+.bp{background:var(--amber-bg);color:var(--amber)}
+.bu{background:var(--red-bg);color:var(--red)}
+.bo{background:var(--green-bg);color:var(--green)}
+.bc{background:var(--red-bg);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:9px 12px;border-bottom:2px solid var(--border);font-weight:600;font-size:13px;color:var(--text2)}
+td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1rem}
+.stat{background:var(--bg2);border-radius:var(--rs);padding:12px;text-align:center}
+.stat-n{font-size:26px;font-weight:700;line-height:1}
+.stat-l{font-size:12px;color:var(--text2);margin-top:4px}
+.tog{position:relative;width:52px;height:28px;cursor:pointer;display:inline-block}
+.tog input{opacity:0;width:0;height:0;position:absolute}
+.tog-s{position:absolute;inset:0;background:var(--border2);border-radius:14px;transition:.3s}
+.tog-s:before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+.tog input:checked+.tog-s{background:var(--green)}
+.tog input:checked+.tog-s:before{transform:translateX(24px)}
+.err{padding:10px 14px;border-radius:var(--rs);font-size:14px;margin-bottom:1rem;background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.fg{margin-bottom:1rem}
+.fg label{font-size:14px;font-weight:500;display:block;margin-bottom:6px}
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;overflow-y:auto;padding:2rem 1rem}
+.modal{background:var(--bg);border-radius:var(--r);padding:1.5rem;max-width:700px;margin:0 auto}
+.ritem{padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px}
+.ritem:last-child{border-bottom:none}
+.dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.dot-ok{background:var(--green-bg);color:var(--green)}
+.dot-no{background:var(--red-bg);color:var(--red)}
+select{border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;font-size:14px;background:var(--bg);color:var(--text);font-family:inherit}
+.miss-box{background:var(--red-bg);border-left:3px solid var(--red);padding:8px 10px;font-size:12px;margin-top:4px;border-radius:0 var(--rs) var(--rs) 0}
+.pass-box{background:var(--green-bg);border-left:3px solid var(--green);padding:6px 10px;font-size:12px;margin-top:4px;border-radius:0 var(--rs) var(--rs) 0}
+.ctrl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.ctrl-row label{font-size:14px;font-weight:500;white-space:nowrap;min-width:140px}
+.ctrl-row input[type=number]{width:80px}
+.success-msg{font-size:13px;color:var(--green);font-weight:500;display:none}
 </style>
 </head>
 <body>
-<div class="page">
+<div class="wrap">
 
-<!-- LOGIN -->
-<div id="screen-login">
+<div id="s-login">
   <div style="max-width:360px;margin:3rem auto">
     <h1 style="margin-bottom:4px">Instructor Dashboard</h1>
-    <p class="subtitle" style="margin-bottom:1.5rem">SCM 106321 · Dr. Hamza Adeinat</p>
+    <p class="sub" style="margin-bottom:1.5rem">SCM 106321 &#183; Dr. Hamza Adeinat</p>
     <div class="card">
-      <div id="login-err" class="alert alert-error" style="display:none"></div>
-      <div class="form-group">
-        <label>Instructor password</label>
-        <input id="inp-pass" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-      <button class="btn btn-primary" onclick="doLogin()" style="width:100%">Sign in →</button>
+      <div id="login-err" class="err" style="display:none"></div>
+      <div class="fg"><label>Password</label><input id="inp-pass" type="password" placeholder="Enter instructor password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-p" onclick="doLogin()" style="width:100%">Sign in &#8594;</button>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="screen-dash" style="display:none">
-
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px">
-    <div>
-      <h1>Instructor Dashboard</h1>
-      <p class="subtitle">SCM 106321 · Practice Exam · Spring 2026</p>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <button class="btn" onclick="loadData()">↻ Refresh</button>
+<div id="s-dash" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px">
+    <div><h1>Instructor Dashboard</h1><p class="sub">SCM 106321 &#183; Practice Exam &#183; Spring 2026</p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="loadData()">&#8635; Refresh</button>
       <button class="btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
 
-  <!-- EXAM TOGGLE -->
+  <!-- EXAM CONTROLS -->
   <div class="card" style="margin-bottom:1rem">
-    <div class="toggle-row">
-      <label class="toggle">
-        <input type="checkbox" id="exam-toggle" onchange="toggleExam(this.checked)">
-        <span class="toggle-slider"></span>
-      </label>
+    <h3 style="margin-bottom:12px">Exam controls</h3>
+
+    <!-- Open/Close toggle -->
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:4px">
+      <label class="tog"><input type="checkbox" id="exam-tog" onchange="toggleExam(this.checked)"><span class="tog-s"></span></label>
       <div>
-        <div style="font-weight:600;font-size:15px">
-          Exam status: <span id="exam-status-label"></span>
-          <span id="exam-status-badge" class="badge" style="margin-left:6px"></span>
-        </div>
-        <div class="subtitle" style="font-size:13px">Turn off between sections to prevent students sharing questions</div>
+        <div style="font-weight:600">Status: <span id="tog-label"></span> <span id="tog-badge" class="badge"></span></div>
+        <div class="sub" style="font-size:13px">Turn OFF between sections to prevent students sharing questions</div>
       </div>
+    </div>
+
+    <!-- Exam duration -->
+    <div class="ctrl-row">
+      <label>&#9201; Exam duration</label>
+      <input type="number" id="inp-duration" min="10" max="180" style="width:80px">
+      <span style="font-size:14px;color:var(--text2)">minutes</span>
+      <button class="btn btn-p" onclick="setDuration()" style="padding:6px 14px;font-size:13px">Set duration</button>
+      <span class="success-msg" id="dur-msg">&#10003; Saved</span>
+      <span class="sub" style="font-size:13px">Affects students who have not started yet</span>
+    </div>
+
+    <!-- Extra time -->
+    <div class="ctrl-row">
+      <label>&#43; Add extra time</label>
+      <input type="number" id="inp-extra" min="1" max="60" placeholder="e.g. 10" style="width:80px">
+      <span style="font-size:14px;color:var(--text2)">minutes</span>
+      <button class="btn btn-green" onclick="grantExtra()" style="padding:6px 14px;font-size:13px">Grant to all active</button>
+      <span class="success-msg" id="extra-msg">&#10003; Extra time granted</span>
+      <span class="sub" style="font-size:13px" id="extra-total"></span>
     </div>
   </div>
 
   <!-- STATS -->
-  <div class="stat-grid" id="stats-grid"></div>
+  <div class="stats" id="stats"></div>
 
-  <!-- FILTER -->
-  <div class="filter-row">
-    <input id="search" type="text" placeholder="Search by name or ID…" style="width:220px" oninput="renderTable()">
-    <select id="filter-grade" onchange="renderTable()">
+  <!-- FILTERS -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem;align-items:center">
+    <input id="search" type="text" placeholder="Search by name or ID&#8230;" style="width:220px;border:1px solid var(--border2);border-radius:var(--rs);padding:7px 12px;font-size:14px;background:var(--bg);color:var(--text)" oninput="renderTable()">
+    <select id="f-grade" onchange="renderTable()">
       <option value="">All grades</option>
       <option value="D">Distinction</option>
       <option value="M">Merit</option>
       <option value="P">Pass</option>
-      <option value="U">Ungraded</option>
+      <option value="U">Ungraded / in progress</option>
     </select>
-    <select id="filter-attempt" onchange="renderTable()">
-      <option value="">All attempts</option>
-      <option value="1">Attempt 1</option>
-      <option value="2">Attempt 2</option>
-      <option value="3">Attempt 3+</option>
-    </select>
-    <span id="row-count" class="subtitle" style="font-size:13px"></span>
+    <span id="rowcount" class="sub" style="font-size:13px"></span>
   </div>
 
   <!-- TABLE -->
   <div class="card" style="padding:0;overflow-x:auto">
     <table>
-      <thead>
-        <tr>
-          <th>Student Name</th>
-          <th>Student ID</th>
-          <th>Attempt</th>
-          <th>Grade</th>
-          <th>Date</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="attempts-tbody"></tbody>
+      <thead><tr>
+        <th>Student Name</th><th>Student ID</th><th>Grade</th><th>Submitted</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
     </table>
   </div>
-
-  <p class="subtitle" style="font-size:12px;margin-top:8px">Click "Details" on any row to see the full question-by-question breakdown.</p>
-
+  <p class="sub" style="font-size:12px;margin-top:8px">Click Details on any row to see the full question-by-question breakdown.</p>
 </div>
 
 <!-- DETAIL MODAL -->
-<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
+<div class="modal-wrap" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <h2 id="modal-title" style="margin-bottom:0"></h2>
-      <button class="btn" onclick="closeModal()">✕ Close</button>
+      <h2 id="m-title" style="margin-bottom:0"></h2>
+      <button class="btn" onclick="closeModal()">&#10005; Close</button>
     </div>
-    <div id="modal-body"></div>
+    <div id="m-body"></div>
   </div>
 </div>
 
 </div>
-
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────
+// ============================================================
 const SUPABASE_URL = 'https://pzrnkocekbusxhozpiee.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cm5rb2Nla2J1c3hob3pwaWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDUwMzYsImV4cCI6MjA5MTc4MTAzNn0.JU8TMKLPkEWkUqT7fn6G2F1_XVCcA4MQs6GQhUJoR74';
 const ANTHROPIC_API_KEY = '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';
-// ─────────────────────────────────────────────────────────────────────────
+// ============================================================
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let allAttempts = [];
-let examOpen = false;
 
-function doLogin() {
+const QS_SHORT = [
+  {part:"A",level:"P1",q:"Q1 \u2014 Supply chain surplus calculation"},
+  {part:"A",level:"P2",q:"Q2 \u2014 Classify Strategic/Planning/Operational"},
+  {part:"A",level:"M", q:"Q3 \u2014 Implied uncertainty spectrum"},
+  {part:"B",level:"D", q:"Q4 \u2014 SwiftWear vs BasicThread strategic fit"},
+  {part:"B",level:"M", q:"Q5 \u2014 SwiftWear expansion challenge"},
+  {part:"B",level:"M", q:"Q6 \u2014 Flash sale scope violated"},
+  {part:"C",level:"D", q:"Q7 \u2014 FreshLink Irbid DC decision"},
+  {part:"C",level:"P1",q:"Q8 \u2014 C2C cycle calculation"},
+  {part:"C",level:"M", q:"Q9 \u2014 Two C2C improvement actions"},
+  {part:"D",level:"D", q:"Q10 \u2014 NPV Lease vs Buy"},
+  {part:"D",level:"M", q:"Q11 \u2014 Decision tree expected NPV"},
+  {part:"E",level:"P2",q:"Q12 \u2014 Negative C2C advantage"},
+  {part:"E",level:"M", q:"Q13 \u2014 Zara sourcing strategy"},
+  {part:"E",level:"M", q:"Q14 \u2014 When to hold more inventory"},
+  {part:"E",level:"P2",q:"Q15 \u2014 Pull vs push with examples"},
+  {part:"F",level:"P1",q:"Q16 \u2014 LP decision variables"},
+  {part:"F",level:"M", q:"Q17 \u2014 LP objective function"},
+  {part:"F",level:"D", q:"Q18 \u2014 LP all constraints"},
+];
+
+function doLogin(){
   const pass = document.getElementById('inp-pass').value;
   const err  = document.getElementById('login-err');
-  if (pass !== 'scm2026') {
-    err.textContent = 'Incorrect password.'; err.style.display='block'; return;
-  }
-  sessionStorage.setItem('instructor_auth','1');
-  document.getElementById('screen-login').style.display='none';
-  document.getElementById('screen-dash').style.display='block';
+  if(pass !== INSTRUCTOR_PASSWORD){ err.textContent='Incorrect password.'; err.style.display='block'; return; }
+  sessionStorage.setItem('ia','1');
+  document.getElementById('s-login').style.display='none';
+  document.getElementById('s-dash').style.display='block';
   loadData();
 }
 
-function signOut() {
-  sessionStorage.removeItem('instructor_auth');
-  document.getElementById('screen-dash').style.display='none';
-  document.getElementById('screen-login').style.display='block';
+function signOut(){
+  sessionStorage.removeItem('ia');
+  document.getElementById('s-dash').style.display='none';
+  document.getElementById('s-login').style.display='block';
 }
 
-async function loadData() {
-  const { data: settings } = await sb.from('exam_settings').select('is_open').eq('id',1).single();
-  examOpen = settings?.is_open || false;
-  document.getElementById('exam-toggle').checked = examOpen;
-  document.getElementById('exam-status-label').textContent = examOpen ? 'Open' : 'Closed';
-  const badge = document.getElementById('exam-status-badge');
-  badge.textContent = examOpen ? 'OPEN' : 'CLOSED';
-  badge.className = 'badge ' + (examOpen ? 'badge-open' : 'badge-closed');
+async function loadData(){
+  const {data:s} = await sb.from('exam_settings').select('is_open,exam_minutes,extra_minutes').eq('id',1).single();
+  const open  = s?.is_open || false;
+  const mins  = s?.exam_minutes || 65;
+  const extra = s?.extra_minutes || 0;
 
-  const { data } = await sb.from('exam_attempts').select('*').order('created_at',{ascending:false});
+  document.getElementById('exam-tog').checked = open;
+  document.getElementById('tog-label').textContent = open ? 'Open' : 'Closed';
+  const tb = document.getElementById('tog-badge');
+  tb.textContent = open ? 'OPEN' : 'CLOSED';
+  tb.className = 'badge ' + (open ? 'bo' : 'bc');
+
+  document.getElementById('inp-duration').value = mins;
+  document.getElementById('extra-total').textContent = extra > 0 ? 'Total extra granted so far: ' + extra + ' min' : '';
+
+  const {data} = await sb.from('exam_attempts').select('*').order('created_at',{ascending:false});
   allAttempts = data || [];
   renderStats();
   renderTable();
 }
 
-async function toggleExam(val) {
+async function toggleExam(val){
   await sb.from('exam_settings').upsert({id:1, is_open:val});
-  examOpen = val;
-  document.getElementById('exam-status-label').textContent = val ? 'Open' : 'Closed';
-  const badge = document.getElementById('exam-status-badge');
-  badge.textContent = val ? 'OPEN' : 'CLOSED';
-  badge.className = 'badge ' + (val ? 'badge-open' : 'badge-closed');
+  document.getElementById('tog-label').textContent = val ? 'Open' : 'Closed';
+  const tb = document.getElementById('tog-badge');
+  tb.textContent = val ? 'OPEN' : 'CLOSED';
+  tb.className = 'badge ' + (val ? 'bo' : 'bc');
 }
 
-function renderStats() {
-  const completed = allAttempts.filter(a=>a.status==='completed');
-  const counts = {D:0,M:0,P:0,U:0};
-  completed.forEach(a=>{ if(counts[a.grade]!==undefined) counts[a.grade]++; });
-  const uniqueStudents = new Set(allAttempts.map(a=>a.student_id)).size;
+async function setDuration(){
+  const mins = parseInt(document.getElementById('inp-duration').value);
+  if(!mins || mins < 10){ alert('Please enter a valid duration (minimum 10 minutes).'); return; }
+  await sb.from('exam_settings').upsert({id:1, exam_minutes:mins});
+  const msg = document.getElementById('dur-msg');
+  msg.style.display = 'inline';
+  setTimeout(()=>{ msg.style.display='none'; }, 3000);
+}
 
-  document.getElementById('stats-grid').innerHTML = `
-    <div class="stat"><div class="stat-num">${allAttempts.length}</div><div class="stat-label">Total attempts</div></div>
-    <div class="stat"><div class="stat-num">${uniqueStudents}</div><div class="stat-label">Unique students</div></div>
-    <div class="stat"><div class="stat-num" style="color:var(--green)">${counts.D}</div><div class="stat-label">Distinction</div></div>
-    <div class="stat"><div class="stat-num" style="color:var(--blue)">${counts.M}</div><div class="stat-label">Merit</div></div>
-    <div class="stat"><div class="stat-num" style="color:var(--amber)">${counts.P}</div><div class="stat-label">Pass</div></div>
-    <div class="stat"><div class="stat-num" style="color:var(--red)">${counts.U}</div><div class="stat-label">Ungraded / in progress</div></div>
+async function grantExtra(){
+  const add = parseInt(document.getElementById('inp-extra').value);
+  if(!add || add < 1){ alert('Please enter a valid number of minutes.'); return; }
+  const {data:curr} = await sb.from('exam_settings').select('extra_minutes').eq('id',1).single();
+  const total = (curr?.extra_minutes || 0) + add;
+  await sb.from('exam_settings').upsert({id:1, extra_minutes:total});
+  document.getElementById('extra-total').textContent = 'Total extra granted so far: ' + total + ' min';
+  document.getElementById('inp-extra').value = '';
+  const msg = document.getElementById('extra-msg');
+  msg.style.display = 'inline';
+  setTimeout(()=>{ msg.style.display='none'; }, 3000);
+}
+
+function renderStats(){
+  const comp = allAttempts.filter(a=>a.status==='completed');
+  const c = {D:0,M:0,P:0,U:0};
+  comp.forEach(a=>{ if(c[a.grade]!==undefined) c[a.grade]++; });
+  const uniq = new Set(allAttempts.map(a=>a.student_id)).size;
+  const inProg = allAttempts.filter(a=>a.status==='in_progress').length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-n">${allAttempts.length}</div><div class="stat-l">Total attempts</div></div>
+    <div class="stat"><div class="stat-n">${uniq}</div><div class="stat-l">Unique students</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)">${c.D}</div><div class="stat-l">Distinction</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--blue)">${c.M}</div><div class="stat-l">Merit</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--amber)">${c.P}</div><div class="stat-l">Pass</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--red)">${c.U}</div><div class="stat-l">Ungraded</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--text2)">${inProg}</div><div class="stat-l">In progress</div></div>
   `;
 }
 
-function renderTable() {
-  const search = document.getElementById('search').value.toLowerCase();
-  const gFilter = document.getElementById('filter-grade').value;
-  const aFilter = document.getElementById('filter-attempt').value;
-
-  let rows = allAttempts.filter(a => {
-    const matchSearch = !search || a.student_name?.toLowerCase().includes(search) || a.student_id?.toLowerCase().includes(search);
-    const matchGrade  = !gFilter || a.grade === gFilter;
-    const matchAtt    = !aFilter || (aFilter==='3' ? a.attempt_number>=3 : a.attempt_number===parseInt(aFilter));
-    return matchSearch && matchGrade && matchAtt;
+function renderTable(){
+  const s = document.getElementById('search').value.toLowerCase();
+  const g = document.getElementById('f-grade').value;
+  let rows = allAttempts.filter(a=>{
+    const ms = !s || a.student_name?.toLowerCase().includes(s) || a.student_id?.toLowerCase().includes(s);
+    const mg = !g || a.grade===g || (g==='U' && (!a.grade||a.status==='in_progress'));
+    return ms && mg;
   });
-
-  document.getElementById('row-count').textContent = `${rows.length} result${rows.length!==1?'s':''}`;
-
-  document.getElementById('attempts-tbody').innerHTML = rows.map(a=>`
+  document.getElementById('rowcount').textContent = rows.length + ' result' + (rows.length!==1?'s':'');
+  document.getElementById('tbody').innerHTML = rows.map(a=>`
     <tr>
       <td style="font-weight:500">${esc(a.student_name)}</td>
       <td style="font-family:monospace;font-size:13px">${esc(a.student_id)}</td>
-      <td>${a.attempt_number}</td>
-      <td>${a.grade ? `<span class="badge badge-${a.grade}">${a.grade}</span>` : '<span style="color:var(--text3);font-size:13px">—</span>'}</td>
-      <td style="font-size:13px;color:var(--text2)">${new Date(a.created_at).toLocaleString()}</td>
-      <td><span style="font-size:12px;color:var(--text3)">${a.status==='completed'?'Completed':'In progress'}</span></td>
-      <td>${a.status==='completed' ? `<button class="btn" style="font-size:12px;padding:4px 10px" onclick="openDetail('${a.id}')">Details</button>` : ''}</td>
-    </tr>
-  `).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:2rem">No results found.</td></tr>`;
+      <td>${a.grade?`<span class="badge b${a.grade.toLowerCase()}">${a.grade}</span>`:'<span style="color:var(--text3)">\u2014</span>'}</td>
+      <td style="font-size:13px;color:var(--text2)">${a.completed_at?new Date(a.completed_at).toLocaleString():'\u2014'}</td>
+      <td style="font-size:12px;color:var(--text3)">${a.status==='completed'?'Completed':'In progress'}</td>
+      <td>${a.status==='completed'?`<button class="btn" style="font-size:12px;padding:4px 10px" onclick="openDetail('${a.id}')">Details</button>`:''}</td>
+    </tr>`).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:2rem">No results found.</td></tr>`;
 }
 
-function openDetail(id) {
+function openDetail(id){
   const a = allAttempts.find(x=>x.id===id);
-  if (!a || !a.results) return;
-
-  const QUESTIONS = getQuestions();
-  const gradeLabels = {D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
-  const topLevel = r => r.passed_d?'D':r.passed_m?'M':r.passed_p2?'P2':r.passed_p1?'P1':'U';
-
-  document.getElementById('modal-title').textContent = `${a.student_name} · Attempt ${a.attempt_number} · ${gradeLabels[a.grade]||a.grade}`;
-  document.getElementById('modal-body').innerHTML = `
-    <div style="margin-bottom:1rem;font-size:14px;color:var(--text2)">
-      Student ID: <strong>${a.student_id}</strong> · Submitted: ${new Date(a.created_at).toLocaleString()}
-    </div>
+  if(!a||!a.results) return;
+  const gl = {D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
+  document.getElementById('m-title').textContent = a.student_name + ' \u00b7 ' + (gl[a.grade]||a.grade);
+  document.getElementById('m-body').innerHTML = `
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">ID: <strong>${esc(a.student_id)}</strong> \u00b7 Submitted: ${a.completed_at?new Date(a.completed_at).toLocaleString():'\u2014'}</p>
     ${a.results.map((r,i)=>{
-      const q = QUESTIONS[i];
-      const tl = topLevel(r);
-      const passed = tl !== 'U';
+      const q = QS_SHORT[i];
       const ans = a.answers?.[i] || '(no answer)';
-      return `<div class="detail-item">
-        <div class="check ${passed?'check-pass':'check-fail'}">${passed?'✓':'✗'}</div>
+      const fb = r.feedback&&r.feedback!=='undefined'&&r.feedback.length>2 ? r.feedback : 'See instructor.';
+      const badgeLabel = r.passed ? 'Earned ' + q.level : 'Did not earn ' + q.level;
+      return `<div class="ritem">
+        <div class="dot ${r.passed?'dot-ok':'dot-no'}">${r.passed?'&#10003;':'&#10007;'}</div>
         <div style="flex:1">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
-            <strong style="font-size:13px">Q${i+1} — Part ${q.part}</strong>
-            <span class="badge badge-${tl}" style="font-size:11px">Achieved: ${tl}</span>
-            <span style="font-size:11px;color:var(--text3)">Target: ${q.pmd_level}</span>
+            <strong style="font-size:13px">Q${i+1} \u2014 Part ${q.part}</strong>
+            <span class="badge ${r.passed?'bd':'bu'}" style="font-size:11px">${badgeLabel}</span>
           </div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;font-style:italic">${q.q.substring(0,80)}…</div>
-          <div style="font-size:13px;background:var(--bg2);padding:8px 10px;border-radius:6px;margin-bottom:6px;color:var(--text2)">${esc(ans)}</div>
-          <div style="font-size:13px;color:var(--text2)">${r.feedback}</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;font-style:italic">${esc(q.q)}</div>
+          <div style="font-size:12px;background:var(--bg2);padding:7px 10px;border-radius:var(--rs);margin-bottom:6px;color:var(--text2)">${esc(ans)}</div>
+          ${r.passed
+            ?`<div class="pass-box">&#10003; ${esc(fb)}</div>`
+            :`<div class="miss-box"><strong>What was missing:</strong> ${esc(fb)}</div>`
+          }
         </div>
       </div>`;
-    }).join('')}
-  `;
-  document.getElementById('modal-bg').style.display='flex';
+    }).join('')}`;
+  document.getElementById('modal').style.display='block';
 }
 
-function closeModal() {
-  document.getElementById('modal-bg').style.display='none';
-}
-
+function closeModal(){ document.getElementById('modal').style.display='none'; }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function getQuestions(){
-  return [
-    {part:"A",pmd_level:"P2",q:"Q1. Calculate the supply chain surplus per unit for ReadyMart."},
-    {part:"A",pmd_level:"P2",q:"Q2. Classify each decision as Strategic, Planning, or Operational."},
-    {part:"A",pmd_level:"M", q:"Q3. Salt vs. smartphone — implied uncertainty spectrum."},
-    {part:"B",pmd_level:"D", q:"Q4. SwiftWear vs. BasicThread — strategic fit assessment."},
-    {part:"B",pmd_level:"M", q:"Q5. SwiftWear expansion — strategic fit challenge."},
-    {part:"B",pmd_level:"M", q:"Q6. Flash sale — strategic fit scope violated."},
-    {part:"C",pmd_level:"D", q:"Q7. Should FreshLink open the Irbid DC?"},
-    {part:"C",pmd_level:"P2",q:"Q8. Calculate FreshLink's C2C cycle."},
-    {part:"C",pmd_level:"M", q:"Q9. Two actions to improve C2C with trade-offs."},
-    {part:"D",pmd_level:"D", q:"Q10. NPV Lease vs. Buy — ColdChain."},
-    {part:"D",pmd_level:"M", q:"Q11. Decision tree expected NPV Year 2."},
-    {part:"E",pmd_level:"P2",q:"Q12. Negative C2C cycle — meaning and advantage."},
-    {part:"E",pmd_level:"M", q:"Q13. Zara sourcing strategy — strategic fit."},
-    {part:"E",pmd_level:"M", q:"Q14. When is more inventory the right decision?"},
-    {part:"E",pmd_level:"P2",q:"Q15. Pull vs. push — definition and examples."},
-    {part:"F",pmd_level:"P2",q:"Q16. Define decision variables for LP model."},
-    {part:"F",pmd_level:"M", q:"Q17. Write the objective function."},
-    {part:"F",pmd_level:"D", q:"Q18. Write all constraint equations."},
-  ];
-}
-
-// Auto-login if session exists
-if (sessionStorage.getItem('instructor_auth')==='1') {
-  document.getElementById('screen-login').style.display='none';
-  document.getElementById('screen-dash').style.display='block';
+if(sessionStorage.getItem('ia')==='1'){
+  document.getElementById('s-login').style.display='none';
+  document.getElementById('s-dash').style.display='block';
   loadData();
 }
-
-// Auto-refresh every 30 seconds
-setInterval(()=>{ if(document.getElementById('screen-dash').style.display!=='none') loadData(); }, 30000);
+setInterval(()=>{ if(document.getElementById('s-dash').style.display!=='none') loadData(); }, 30000);
 </script>
 </body>
 </html>
