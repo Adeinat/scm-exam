@@ -446,10 +446,13 @@ function calcGrade(results){
   const pIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='P1'||QS[i].level==='P2');
   const mIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='M');
   const dIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='D');
-  const allPass = arr => arr.every(i=>results[i]&&results[i].passed);
-  if(!allPass(pIdx)) return 'U';
-  if(!allPass(mIdx)) return 'P';
-  if(!allPass(dIdx)) return 'M';
+  const pct = arr => arr.length === 0 ? 1 : arr.filter(i=>results[i]&&results[i].passed).length / arr.length;
+  const pPass = pct(pIdx) >= 0.75;
+  const mPass = pct(mIdx) >= 0.75;
+  const dPass = pct(dIdx) >= 0.75;
+  if(!pPass) return 'U';
+  if(!mPass) return 'P';
+  if(!dPass) return 'M';
   return 'D';
 }
 
