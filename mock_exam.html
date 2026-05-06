@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCM 106321 — Mock Exam</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f8f7;--bg3:#f2f1ef;
+  --text:#1a1a1a;--text2:#595959;--text3:#999;
+  --border:#e0ddd8;--border2:#ccc;
+  --blue:#1F4E79;--blue-bg:#D6E4F0;
+  --green:#1B5E20;--green-bg:#E8F5E9;
+  --red:#C00000;--red-bg:#FCE4E4;
+  --amber:#633806;--amber-bg:#FAEEDA;
+  --r:10px;--rs:6px
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
+  --text:#f0f0f0;--text2:#aaa;--text3:#666;
+  --border:#3a3a3a;--border2:#555;
+  --blue-bg:#0c2d47;--green-bg:#0d2e10;--red-bg:#3a0000;--amber-bg:#2a1500
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg3);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem}
+h1{font-size:22px;font-weight:600;margin-bottom:4px}
+h2{font-size:18px;font-weight:600;margin-bottom:10px}
+h3{font-size:15px;font-weight:600;margin-bottom:8px}
+.sub{color:var(--text2);font-size:14px}
+input,textarea{width:100%;border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);transition:border .2s}
+input:focus,textarea:focus{outline:none;border-color:var(--blue)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+.btn{border:1px solid var(--border2);background:var(--bg);color:var(--text);padding:9px 20px;border-radius:var(--rs);cursor:pointer;font-size:14px;font-family:inherit;transition:all .15s}
+.btn:hover{background:var(--bg2)}
+.btn-p{background:var(--text);color:var(--bg);border-color:transparent}
+.btn-p:hover{opacity:.85}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.bd{background:var(--green-bg);color:var(--green)}
+.bm{background:var(--blue-bg);color:var(--blue)}
+.bp{background:var(--amber-bg);color:var(--amber)}
+.bu{background:var(--red-bg);color:var(--red)}
+.prog{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:8px 0}
+.prog-bar{height:100%;background:var(--blue);transition:width .4s}
+.hint{font-size:13px;color:var(--text2);font-style:italic;padding:8px 12px;background:var(--bg2);border-radius:var(--rs);border-left:3px solid var(--border2);margin:4px 0 10px}
+.scenario{font-size:13px;color:var(--text2);padding:10px 14px;background:var(--bg2);border-radius:var(--rs);margin-bottom:14px;border-left:3px solid var(--blue)}
+.qmeta{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.qtext{font-size:15px;margin-bottom:10px;font-weight:500;line-height:1.5;user-select:none;-webkit-user-select:none}
+.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--text);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ritem{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ritem:last-child{border-bottom:none}
+.dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px;font-weight:700}
+.dot-ok{background:var(--green-bg);color:var(--green)}
+.dot-no{background:var(--red-bg);color:var(--red)}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem}
+.err{padding:10px 14px;border-radius:var(--rs);font-size:14px;margin-bottom:1rem;background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.fg{margin-bottom:1rem}
+.fg label{font-size:14px;font-weight:500;display:block;margin-bottom:6px}
+.pmd{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.pmd th,.pmd td{border:1px solid var(--border);padding:7px 10px;text-align:left}
+.pmd th{background:var(--bg2);font-weight:600}
+.grade-big{font-size:64px;font-weight:700;line-height:1}
+.miss-box{background:var(--red-bg);border:1px solid var(--red);border-radius:var(--rs);padding:10px 14px;font-size:13px;margin-top:6px}
+.pass-box{background:var(--green-bg);border:1px solid var(--green);border-radius:var(--rs);padding:6px 12px;font-size:13px;margin-top:6px}
+.timer{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:5px 12px;border-radius:var(--rs);background:var(--bg2);border:1px solid var(--border)}
+.timer-warn{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+.timer-danger{background:var(--red-bg);border-color:var(--red);color:var(--red);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.time-banner{display:none;background:var(--green-bg);border:1px solid var(--green);color:var(--green);border-radius:var(--rs);padding:8px 14px;font-size:13px;font-weight:600;margin-bottom:8px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="s-closed" style="display:none">
+  <div class="card" style="text-align:center;padding:3rem 1rem;margin-top:2rem">
+    <div style="font-size:48px;margin-bottom:1rem">&#128274;</div>
+    <h2>Exam is currently closed</h2>
+    <p class="sub" style="margin-top:8px">Please wait for your instructor to open it.</p>
+  </div>
+</div>
+
+<div id="s-login" style="display:none">
+  <div style="margin-bottom:1.5rem">
+    <h1>SCM 106321 &#8212; Mock Exam</h1>
+    <p class="sub">Al-Hussein Technical University &#183; Dr. Hamza Adeinat &#183; Spring 2026</p>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <table class="pmd">
+      <tr><th>Grade</th><th>How it is calculated</th></tr>
+      <tr><td><span class="badge bd">D</span></td><td>At least 75% of P, M, and D questions passed</td></tr>
+      <tr><td><span class="badge bm">M</span></td><td>At least 75% of P and M questions passed; less than 75% of D questions passed</td></tr>
+      <tr><td><span class="badge bp">P</span></td><td>At least 75% of P questions passed; less than 75% of M questions passed</td></tr>
+      <tr><td><span class="badge bu">U</span></td><td>Less than 75% of P questions passed</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:14px">Sign in to begin</h3>
+    <div id="login-err" class="err" style="display:none"></div>
+    <div class="fg"><label>Full Name</label><input id="inp-name" type="text" placeholder="e.g. Ahmed Al-Rashidi" autocomplete="off"></div>
+    <div class="fg"><label>Student ID</label><input id="inp-id" type="text" placeholder="e.g. 202212345" autocomplete="off"></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem" id="exam-info">One attempt only &#183; Calculators permitted &#183; Keep answers brief</p>
+    <button class="btn btn-p" onclick="doLogin()" id="btn-login">Start exam &#8594;</button>
+  </div>
+</div>
+
+<div id="s-exam" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-weight:600" id="e-name"></div><div class="sub" id="e-part" style="font-size:13px"></div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="sub" style="font-size:13px" id="e-cnt"></div>
+      <div class="timer" id="timer">&#9201; --:--</div>
+    </div>
+  </div>
+  <div class="prog"><div class="prog-bar" id="e-prog" style="width:0%"></div></div>
+  <div class="time-banner" id="time-banner"></div>
+  <div id="e-q" style="margin-top:1.2rem"></div>
+  <div class="nav">
+    <button class="btn" id="btn-prev" onclick="nav(-1)">&#8592; Back</button>
+    <button class="btn btn-p" id="btn-next" onclick="nav(1)">Next &#8594;</button>
+  </div>
+</div>
+
+<div id="s-grading" style="display:none">
+  <div class="card" style="text-align:center;padding:2.5rem;margin-top:2rem">
+    <div class="spin" style="width:36px;height:36px;margin:0 auto 1.2rem"></div>
+    <h2>Grading your exam</h2>
+    <p class="sub" id="g-msg" style="margin-top:8px">Please wait&#8230;</p>
+    <div class="prog" style="max-width:320px;margin:1.2rem auto 0"><div class="prog-bar" id="g-prog" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div id="s-results" style="display:none">
+  <div class="card" style="margin-bottom:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <p class="sub" id="r-name" style="margin-bottom:4px"></p>
+        <h2 id="r-head" style="margin-bottom:4px"></h2>
+        <p class="sub" id="r-sub" style="font-size:13px"></p>
+      </div>
+      <div id="r-grade" class="grade-big"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <h3 style="margin-bottom:1rem">Question-by-question feedback</h3>
+    <div id="r-detail"></div>
+  </div>
+  <p style="font-size:13px;color:var(--text2)">Your results have been saved. You may close this window.</p>
+</div>
+
+</div>
+<script>
+// ============================================================
+const SUPABASE_URL      = 'https://pzrnkocekbusxhozpiee.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6cm5rb2Nla2J1c3hob3pwaWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDUwMzYsImV4cCI6MjA5MTc4MTAzNn0.JU8TMKLPkEWkUqT7fn6G2F1_XVCcA4MQs6GQhUJoR74';
+const EDGE_URL          = 'https://pzrnkocekbusxhozpiee.supabase.co/functions/v1/grade-answer';
+// ============================================================
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const QS = [
+
+  // ── TOPIC 1: SC Structure, Flows, Objective ─────────────────────────
+  {part:"A",label:"Supply Chain Fundamentals",level:"P1",
+   scenario:"NileFood is a food company in Jordan. It buys wheat from 30 farms, mills it at two factories, stores flour at five regional warehouses, and sells to 150 bakeries. Each bakery serves thousands of end consumers daily.",
+   q:"Q1. A new analyst says NileFood's supply chain is a simple chain from farms to bakeries. A senior manager disagrees and calls it a network. Who is right? What does the network view capture that a simple chain misses?",
+   pass_criteria:"Student correctly states the supply chain is a network and explains that networks capture multiple suppliers, facilities, and customers with complex interconnections — not just a linear sequence.",
+   fail_reason:"A supply chain is a NETWORK — it has multiple suppliers, multiple facilities, and multiple customer connections running simultaneously. A simple chain view misses these parallel flows and the complexity of managing multiple paths at once."},
+
+  // ── TOPIC 2: Push/Pull, Competitive Strategy, SC Strategy ────────────
+  {part:"A",label:"Supply Chain Fundamentals",level:"P2",
+   scenario:"ArabiShop is an e-commerce company. Its competitive strategy targets customers who want the widest possible product variety delivered within 24 hours anywhere in Jordan.",
+   q:"Q2. What does ArabiShop's competitive strategy tell us about what its supply chain strategy must prioritise? Name one specific supply chain capability ArabiShop must have that a low-cost supermarket chain would not need.",
+   pass_criteria:"Student correctly links the competitive strategy (variety + speed) to a responsive supply chain strategy. Names at least one specific capability such as fast order fulfilment, flexible inventory, or distributed warehouses.",
+   fail_reason:"ArabiShop's competitive strategy targets customers who want variety and speed — so its supply chain strategy must prioritise RESPONSIVENESS. One capability needed: distributed fulfilment centres close to customers, or flexible inventory systems that can handle thousands of SKUs with fast picking."},
+
+  // ── TOPIC 3: Implied Uncertainty, Responsiveness, Strategic Fit ──────
+  {part:"B",label:"Strategic Fit and Uncertainty",level:"P2",
+   scenario:"StyleNow sells limited-edition sneakers that sell out in hours. PlanShoe sells standard work boots in fixed sizes that retailers reorder every month.",
+   q:"Q3. Which product has higher implied demand uncertainty? What type of supply chain does each product require? Name the type and give one reason.",
+   pass_criteria:"StyleNow correctly identified as higher implied uncertainty. StyleNow needs a responsive supply chain. PlanShoe needs an efficient supply chain. At least one reason given for each.",
+   fail_reason:"StyleNow has HIGHER implied uncertainty — demand is unpredictable and spikes suddenly. It needs a RESPONSIVE supply chain (fast production, flexible capacity). PlanShoe has LOW uncertainty — stable, predictable demand. It needs an EFFICIENT supply chain (low cost, high utilization, long lead times acceptable)."},
+
+  {part:"B",label:"Strategic Fit and Uncertainty",level:"M",
+   scenario:"StyleNow decides to expand by adding a 'classics' line of plain white sneakers alongside its limited-edition drops. Both lines will be sold through the same website and warehouses.",
+   q:"Q4. What strategic fit challenge does this expansion create? Name the specific concept that addresses it and explain in one sentence how StyleNow should apply it.",
+   pass_criteria:"Identifies the conflict between two different supply chain needs. Names tailored supply chain. Explains applying different strategies to each product segment.",
+   fail_reason:"The challenge is that limited-edition drops need a RESPONSIVE supply chain while classics need an EFFICIENT one — running both through the same system creates misalignment. The concept is TAILORED SUPPLY CHAIN: StyleNow should maintain fast, flexible sourcing for drops and a separate low-cost, high-volume channel for classics."},
+
+  // ── TOPIC 4: Information Lever, Product Life Cycle ───────────────────
+  {part:"B",label:"Strategic Fit and Uncertainty",level:"P1",
+   scenario:"StyleNow invests JD 200,000 in a data analytics platform that analyses social media trends to predict which sneaker styles will sell out in the next 30 days with 80% accuracy.",
+   q:"Q5. Which supply chain lever for managing uncertainty does this investment represent? How does it specifically help StyleNow reduce supply chain costs?",
+   pass_criteria:"Names information as the lever. Explains that better demand prediction reduces the need for excess inventory or emergency production, cutting costs.",
+   fail_reason:"This is the INFORMATION lever. Better demand forecasting means StyleNow can produce closer to actual demand — reducing excess inventory from overproduction and emergency costs from stockouts. Information replaces buffer inventory as the primary tool for managing uncertainty."},
+
+  // ── TOPIC 5: C2C Cycle ───────────────────────────────────────────────
+  {part:"C",label:"Cash-to-Cash Cycle",level:"P1",
+   scenario:"GulfMart reported the following: Inventory turnover = 7.3, Accounts Receivable turnover = 11.2, Accounts Payable turnover = 5.8. The company operates 365 days a year.",
+   q:"Q6. Calculate GulfMart's Cash-to-Cash (C2C) cycle. Show each component separately. (C2C = DIO + DSO − DPO)",
+   hint:"DIO = 365 ÷ Inventory Turnover, DSO = 365 ÷ AR Turnover, DPO = 365 ÷ AP Turnover",
+   pass_criteria:"Correct calculation: DIO = 50.0, DSO = 32.6, DPO = 62.9. C2C = 50.0 + 32.6 − 62.9 = 19.7 days.",
+   fail_reason:"DIO = 365/7.3 = 50.0 days. DSO = 365/11.2 = 32.6 days. DPO = 365/5.8 = 62.9 days. C2C = 50.0 + 32.6 − 62.9 = 19.7 days. Must divide 365 by each turnover ratio — not use the raw numbers."},
+
+  {part:"C",label:"Cash-to-Cash Cycle",level:"M",
+   scenario:"GulfMart's finance director wants to improve the C2C cycle. She proposes two actions: (A) negotiate 90-day payment terms with suppliers instead of the current 63 days, and (B) push customers to pay within 15 days by offering a 1% early payment discount.",
+   q:"Q7. For each action, state whether it improves the C2C cycle and identify one specific trade-off or risk the company must accept.",
+   pass_criteria:"Action A correctly identified as improving C2C (extends DPO). Action B correctly identified as improving C2C (reduces DSO). One specific trade-off for each.",
+   fail_reason:"Action A IMPROVES C2C — longer payment terms extend DPO, reducing the cycle. Trade-off: suppliers may increase prices or reduce service priority. Action B IMPROVES C2C — faster customer payment reduces DSO. Trade-off: the 1% discount reduces revenue and may not be accepted by all customers."},
+
+  // ── TOPIC 6: EOQ ─────────────────────────────────────────────────────
+  {part:"D",label:"Inventory — EOQ",level:"P1",
+   scenario:"BikeJO sells mountain bikes. Annual demand = 1,200 bikes/year. Fixed ordering cost = JD 500 per order. Each bike costs JD 800. Annual holding cost rate = 25%.",
+   q:"Q8. Calculate the Economic Order Quantity (EOQ) for BikeJO. Show your working.",
+   hint:"EOQ = \u221A(2 \u00d7 Annual Demand \u00d7 Fixed Order Cost \u00f7 Annual Holding Cost per unit)",
+   pass_criteria:"Correct calculation: Annual holding cost = 800 × 0.25 = JD 200. EOQ = √(2 × 1200 × 500 / 200) = √6000 = 77.5 ≈ 78 bikes.",
+   fail_reason:"Annual holding cost per unit = 800 × 0.25 = JD 200. EOQ = √(2 × 1200 × 500 ÷ 200) = √(1,200,000 ÷ 200) = √6,000 = 77.5 ≈ 78 bikes per order."},
+
+  {part:"D",label:"Inventory — EOQ",level:"M",
+   scenario:"BikeJO's supplier offers free delivery if BikeJO orders exactly 200 bikes per order instead of the EOQ. The manager considers accepting this offer.",
+   q:"Q9. Without calculating the full cost, explain what happens to BikeJO's total inventory costs when it orders 200 instead of 78 bikes. Which cost component increases and which decreases? Should the manager accept if the delivery saving is JD 1,500 per year?",
+   pass_criteria:"Correctly identifies that ordering more than EOQ increases holding costs and decreases ordering costs. Recognises that accepting depends on whether savings exceed the cost increase from deviation.",
+   fail_reason:"Ordering MORE than EOQ means HIGHER average inventory → HIGHER holding costs and FEWER orders per year → LOWER ordering costs. The total cost rises because EOQ minimizes total cost. To decide whether to accept: calculate the extra total cost from ordering 200 vs 78, and compare it to the JD 1,500 saving."},
+
+  // ── TOPIC 7: Safety Stock and Service Level ──────────────────────────
+  {part:"E",label:"Safety Stock",level:"P1",
+   scenario:"PharmaCo sells a drug with average weekly demand of 400 units and standard deviation of 60 units. Lead time is 3 weeks. The reorder point is set at 1,350 units.",
+   q:"Q10. Calculate: (a) Expected demand during lead time, (b) Safety stock at this reorder point.",
+   pass_criteria:"(a) Expected demand during lead time = 400 × 3 = 1,200 units. (b) Safety stock = 1,350 − 1,200 = 150 units.",
+   fail_reason:"(a) Expected demand during lead time = average weekly demand × lead time = 400 × 3 = 1,200 units. (b) Safety stock = reorder point − expected demand during lead time = 1,350 − 1,200 = 150 units."},
+
+  {part:"E",label:"Safety Stock",level:"M",
+   scenario:"PharmaCo wants to achieve a 95% cycle service level. The standard deviation of demand during lead time is 104 units. (z = 1.65 for 95% CSL)",
+   q:"Q11. Calculate the safety stock needed to achieve 95% CSL. Then explain in one sentence the trade-off PharmaCo faces if it wants to increase the service level from 95% to 99%.",
+   pass_criteria:"Safety stock = 1.65 × 104 = 171.6 ≈ 172 units. Trade-off correctly identified: higher service level requires disproportionately more safety stock, increasing holding costs significantly.",
+   fail_reason:"Safety stock = z × σ_LT = 1.65 × 104 = 171.6 ≈ 172 units. Trade-off: safety stock GROWS RAPIDLY as service level increases — going from 95% to 99% requires much more than a 4% increase in safety stock, significantly raising inventory holding costs."},
+
+  {part:"E",label:"Safety Stock",level:"D",
+   scenario:"PharmaCo currently has 50 retail stores each holding safety stock independently. Each store has average weekly demand of 80 units, standard deviation 30 units, lead time 2 weeks. They are considering centralising into one distribution centre serving all 50 stores. z = 1.65 for 95% CSL.",
+   q:"Q12. Calculate the safety stock needed: (a) across all 50 stores independently, (b) at the single centralised DC. What is the saving from centralisation? Show all steps.",
+   hint:"Centralised \u03c3_LT = \u221A(n) \u00d7 individual \u03c3_LT where individual \u03c3_LT = \u03c3 \u00d7 \u221A(Lead Time)",
+   pass_criteria:"Individual σ_LT = 30 × √2 = 42.4. Individual SS = 1.65 × 42.4 = 70.0 units. Total decentralised SS = 70 × 50 = 3,500 units. Central σ_LT = √50 × 42.4 = 299.7. Central SS = 1.65 × 299.7 = 494.5 ≈ 495 units. Saving = 3,500 − 495 = 3,005 units.",
+   fail_reason:"Step 1: Individual σ_LT = 30 × √2 = 42.4. Step 2: Individual SS = 1.65 × 42.4 = 70 units. Step 3: Total decentralised = 70 × 50 = 3,500 units. Step 4: Central σ_LT = √50 × 42.4 = 299.7. Step 5: Central SS = 1.65 × 299.7 = 495 units. Saving = 3,500 − 495 = 3,005 units."},
+
+  // ── TOPIC 8: Centralization and Aggregation ──────────────────────────
+  {part:"E",label:"Inventory Aggregation",level:"P2",
+   scenario:"A retail chain has 20 stores each with average weekly demand of 150 units and standard deviation of 40 units per store. Lead time = 2 weeks. They propose merging into one central DC serving all 20 stores.",
+   q:"Q13. Without calculating, explain why centralising inventory at one DC allows the chain to hold less total safety stock than keeping inventory at 20 separate stores. What statistical principle makes this work?",
+   pass_criteria:"Explains that demands across stores partially offset each other when pooled. Names the risk pooling or statistical aggregation principle — the standard deviation of combined demand grows slower than the sum of individual standard deviations.",
+   fail_reason:"When demands are pooled, high demand at one store is often offset by low demand at another — this is RISK POOLING. The combined standard deviation grows proportionally to √n (not n), so centralised safety stock is much less than the sum of individual safety stocks."},
+
+  {part:"E",label:"Inventory Aggregation",level:"M",
+   scenario:"The retail chain's CEO asks: 'If centralising reduces safety stock, why don't all companies centralise everything?' The logistics director lists two reasons why some companies still prefer decentralised inventory.",
+   q:"Q14. Give two specific reasons why a company might prefer decentralised inventory despite the safety stock savings from centralisation. For each reason, name a type of product or business where this concern is most relevant.",
+   pass_criteria:"Two valid reasons such as: longer delivery times to customers (relevant for perishables or time-sensitive products), higher transportation costs from one central point (relevant for heavy or bulky goods), loss of customer proximity (relevant for fashion or urgent medical supplies).",
+   fail_reason:"Two reasons to prefer decentralisation: (1) LONGER DELIVERY TIMES — customers wait longer if served from one distant DC (critical for perishable goods or same-day delivery promises). (2) HIGHER OUTBOUND TRANSPORT COSTS — shipping individually to many customers from one point is expensive (relevant for bulky or heavy products where freight costs dominate)."},
+
+  // ── TOPIC 9: Network Design and Facilities ───────────────────────────
+  {part:"F",label:"Network Design",level:"P2",
+   scenario:"QuickDeliver currently ships all orders directly from its central warehouse in Amman to customers across Jordan. A consultant proposes adding regional DCs in Irbid, Aqaba, and Zarqa. The consultant's report shows: each new DC reduces average delivery distance by 35% but adds JD 180,000/year in fixed costs.",
+   q:"Q15. As QuickDeliver adds more DCs, what happens to transportation costs and what happens to facility costs? Is there an optimal number of DCs, and what determines it?",
+   pass_criteria:"Transportation costs decrease as more DCs are added (shorter distances). Facility costs increase (more fixed costs). The optimal number balances the two — where total cost is minimised.",
+   fail_reason:"Adding more DCs DECREASES transportation costs (shorter delivery distances) but INCREASES facility costs (more rent, staff, equipment). The optimal number of DCs is where the total of both costs is minimised — adding one more DC beyond this point costs more in facility expenses than it saves in transport."},
+
+  // ── TOPIC 10: Transportation Networks ───────────────────────────────
+  {part:"F",label:"Transportation Networks",level:"P1",
+   scenario:"FoodExpress makes small daily deliveries to 15 restaurants scattered across Amman. Each restaurant orders a small quantity — too small to fill a full truck on its own. FoodExpress is choosing between two options: (A) send a separate truck to each restaurant, or (B) use one truck that visits multiple restaurants in sequence on a planned route.",
+   q:"Q16. Which option is better for FoodExpress given its situation? What is this routing strategy called and why is it suited to small, frequent deliveries to nearby customers?",
+   pass_criteria:"Option B correctly identified as better. Names milk runs. Explains it is suited to small orders and nearby customers because it consolidates deliveries into one trip, reducing cost per delivery.",
+   fail_reason:"Option B — MILK RUNS — is better. A milk run sends one truck to visit multiple customers in sequence on a planned route. It is ideal when order quantities are small (no single customer fills a truck) and customers are geographically close, because it consolidates shipments and dramatically reduces cost per delivery compared to direct shipping."},
+
+  // ── TOPIC 11: NPV and Decision Trees ────────────────────────────────
+  {part:"G",label:"NPV and Decision Trees",level:"P1",
+   scenario:"ColdStore is deciding whether to lease or buy a warehouse. k = 0.10. Annual revenue = JD 100,000 for both options. Lease cost = JD 40,000/year. Buy cost = JD 70,000 in Year 1 only. Evaluate over 2 years.",
+   q:"Q17. Calculate the NPV for both options. Which should ColdStore choose? Show all steps.",
+   hint:"NPV = C\u2081/(1.1)\u00b9 + C\u2082/(1.1)\u00b2 where C = Revenue \u2212 Cost for that year",
+   pass_criteria:"Lease: Year1=60,000, Year2=60,000. NPV = 60,000/1.1 + 60,000/1.21 = 54,545 + 49,587 = 104,132. Buy: Year1=30,000, Year2=100,000. NPV = 30,000/1.1 + 100,000/1.21 = 27,273 + 82,645 = 109,917. Choose Buy.",
+   fail_reason:"Lease NPV = 60,000/1.1 + 60,000/1.21 = 54,545 + 49,587 = JD 104,132. Buy NPV = 30,000/1.1 + 100,000/1.21 = 27,273 + 82,645 = JD 109,917. Choose BUY — higher NPV. Both years must be discounted separately."},
+
+  {part:"G",label:"NPV and Decision Trees",level:"M",
+   scenario:"ColdStore's Year 2 demand is uncertain: High (prob 0.7, profit JD 110,000) or Low (prob 0.3, profit JD 20,000).",
+   q:"Q18. Calculate the expected NPV of Year 2 profit. Then explain in one sentence why a decision tree is more useful than a fixed NPV when demand is uncertain.",
+   pass_criteria:"Expected profit = 0.7×110,000 + 0.3×20,000 = 77,000 + 6,000 = 83,000. NPV = 83,000/1.21 = 68,595. Decision tree explanation correct.",
+   fail_reason:"Expected profit = (0.7 × 110,000) + (0.3 × 20,000) = 77,000 + 6,000 = JD 83,000. NPV = 83,000 ÷ 1.21 = JD 68,595. A decision tree is better because it explicitly models multiple possible outcomes with their probabilities, while a fixed NPV assumes one certain cash flow."},
+
+  {part:"G",label:"NPV and Decision Trees",level:"D",
+   scenario:"ColdStore can now expand the warehouse in Year 2 if demand is high. Expansion costs JD 30,000 but increases Year 2 profit to JD 150,000 (vs JD 110,000 without expansion). If demand is low, no expansion is made and Year 2 profit stays at JD 20,000. k = 0.10.",
+   q:"Q19. Should ColdStore expand if demand is high? Calculate the Year 2 expected NPV with the expansion option included and compare it to Q18. Show all steps.",
+   pass_criteria:"With expansion if high: profit = 150,000 − 30,000 = 120,000. Expected = 0.7×120,000 + 0.3×20,000 = 84,000 + 6,000 = 90,000. NPV = 90,000/1.21 = 74,380. Better than Q18 (68,595). Yes, should expand.",
+   fail_reason:"If demand is high: net profit with expansion = 150,000 − 30,000 = JD 120,000. Expected profit = (0.7 × 120,000) + (0.3 × 20,000) = 84,000 + 6,000 = JD 90,000. NPV = 90,000 ÷ 1.21 = JD 74,380. This is higher than JD 68,595 in Q18, so YES — ColdStore should expand if demand is high."},
+
+  // ── TOPIC 12: Plant Location LP ─────────────────────────────────────
+  {part:"H",label:"Plant Location LP",level:"P1",
+   scenario:"Jordan Mills supplies flour to two markets: Amman (demand = 70,000 kg/yr) and Zarqa (demand = 50,000 kg/yr). Two factory sites: Site X — Rusaifa (capacity 80,000 kg, fixed cost JD 160,000/yr) and Site Y — Sahab (capacity 90,000 kg, fixed cost JD 190,000/yr). Shipping: X→Amman=JD2.50/kg, X→Zarqa=JD1.80/kg, Y→Amman=JD2.10/kg, Y→Zarqa=JD3.20/kg.",
+   q:"Q20. Define all decision variables for this capacitated plant location model using standard notation.",
+   pass_criteria:"Binary: y_X = 1 if Site X open, 0 otherwise; y_Y = 1 if Site Y open, 0 otherwise. Continuous: x_X1 = kg from X to Amman, x_X2 = kg from X to Zarqa, x_Y1 = kg from Y to Amman, x_Y2 = kg from Y to Zarqa.",
+   fail_reason:"Binary variables: y_X = 1 if Site X (Rusaifa) is open, 0 otherwise; y_Y = 1 if Site Y (Sahab) is open, 0 otherwise. Continuous variables: x_X1 = kg shipped from X to Amman; x_X2 = kg from X to Zarqa; x_Y1 = kg from Y to Amman; x_Y2 = kg from Y to Zarqa."},
+
+  {part:"H",label:"Plant Location LP",level:"M",
+   q:"Q21. Write the objective function for the Jordan Mills model. Explain what each group of terms represents.",
+   pass_criteria:"Min Z = 160,000y_X + 190,000y_Y + 2.50x_X1 + 1.80x_X2 + 2.10x_Y1 + 3.20x_Y2. Fixed cost terms and variable shipping cost terms both explained.",
+   fail_reason:"Min Z = 160,000·y_X + 190,000·y_Y + 2.50·x_X1 + 1.80·x_X2 + 2.10·y_Y1 + 3.20·x_Y2. First two terms = fixed costs paid only if each site opens. Last four terms = variable shipping costs per kg from each site to each market. All six terms required."},
+
+  // ── TOPIC 13: Transportation Cost Calculation ─────────────────────────
+  // Note: not included as separate question — covered implicitly in network topics
+  // Adding as bonus P question on transport cost
+
+];
+
+let ST = {name:'',sid:'',q:0,ans:{},aid:null,timerInterval:null,extraChecker:null};
+
+async function init(){
+  try{
+    const {data,error} = await sb.from('exam_settings').select('is_open,exam_minutes').eq('id',1).single();
+    if(error||!data||!data.is_open){show('s-closed');return;}
+    const mins = data.exam_minutes || 70;
+    document.getElementById('exam-info').textContent = mins + ' minutes \u00b7 21 questions \u00b7 One attempt only \u00b7 Calculators permitted';
+    show('s-login');
+  }catch(e){show('s-closed');}
+}
+
+async function doLogin(){
+  const name = document.getElementById('inp-name').value.trim();
+  const sid  = document.getElementById('inp-id').value.trim();
+  const err  = document.getElementById('login-err');
+  err.style.display = 'none';
+  if(!name||!sid){err.innerHTML='Please enter your full name and student ID.';err.style.display='block';return;}
+  const btn = document.getElementById('btn-login');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Loading&#8230;';
+  try{
+    const {data:prev} = await sb.from('exam_attempts').select('id,grade,created_at,status').eq('student_id',sid).order('created_at',{ascending:false});
+    const done = prev ? prev.filter(a=>a.status==='completed') : [];
+    if(done.length>0){
+      const a=done[0];
+      const gl={D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
+      err.innerHTML='You have already submitted this exam on '+new Date(a.created_at).toLocaleDateString()+'.<br>Your grade: <strong>'+(gl[a.grade]||a.grade)+'</strong>. Only one attempt is allowed.';
+      err.style.display='block'; btn.disabled=false; btn.innerHTML='Start exam &#8594;'; return;
+    }
+    const {data:settings} = await sb.from('exam_settings').select('exam_minutes,extra_minutes').eq('id',1).single();
+    const examMins = settings?.exam_minutes || 70;
+    const extraMins = settings?.extra_minutes || 0;
+    const {data:na} = await sb.from('exam_attempts').insert({student_name:name,student_id:sid,grade:null,status:'in_progress'}).select().single();
+    ST.name=name; ST.sid=sid; ST.aid=na?.id; ST.q=0; ST.ans={};
+    show('s-exam'); renderQ();
+    startTimer(examMins, extraMins);
+  }catch(e){err.innerHTML='Connection error. Please try again.';err.style.display='block';}
+  btn.disabled=false; btn.innerHTML='Start exam &#8594;';
+}
+
+function startTimer(examMins, startingExtra){
+  let secsLeft = examMins * 60;
+  let lastExtra = startingExtra || 0;
+  let warned10 = false;
+  const el = document.getElementById('timer');
+  ST.extraChecker = setInterval(async ()=>{
+    try{
+      const {data} = await sb.from('exam_settings').select('extra_minutes').eq('id',1).single();
+      const newExtra = data?.extra_minutes || 0;
+      if(newExtra > lastExtra){
+        const diff = newExtra - lastExtra;
+        secsLeft += diff * 60;
+        lastExtra = newExtra;
+        warned10 = false;
+        const banner = document.getElementById('time-banner');
+        banner.textContent = '\u23F1 ' + diff + ' extra minute' + (diff>1?'s have':' has') + ' been added by your instructor!';
+        banner.style.display = 'block';
+        setTimeout(()=>{ banner.style.display='none'; }, 8000);
+      }
+    }catch(e){}
+  }, 15000);
+  ST.timerInterval = setInterval(()=>{
+    secsLeft--;
+    const m = Math.floor(secsLeft/60);
+    const s = secsLeft % 60;
+    el.textContent = '\u23F1 ' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    el.className = 'timer';
+    if(secsLeft <= 600 && secsLeft > 60) el.className = 'timer timer-warn';
+    if(secsLeft <= 60) el.className = 'timer timer-danger';
+    if(secsLeft <= 600 && !warned10){ warned10=true; alert('\u26A0\uFE0F 10 minutes remaining!'); }
+    if(secsLeft <= 0){
+      clearInterval(ST.timerInterval); clearInterval(ST.extraChecker);
+      el.textContent = '\u23F1 00:00';
+      alert('Time is up! Your exam will now be submitted automatically.');
+      const ta = document.getElementById('ans');
+      if(ta) ST.ans[ST.q] = ta.value;
+      submitExam();
+    }
+  }, 1000);
+}
+
+function renderQ(){
+  const q = QS[ST.q], t = QS.length;
+  document.getElementById('e-name').textContent = ST.name;
+  document.getElementById('e-part').textContent = 'Part ' + q.part + ' \u2014 ' + q.label;
+  document.getElementById('e-cnt').textContent = (ST.q+1) + ' / ' + t;
+  document.getElementById('e-prog').style.width = Math.round(((ST.q+1)/t)*100) + '%';
+  let h = '';
+  if(q.scenario) h += '<div class="scenario">' + q.scenario + '</div>';
+  h += '<div class="qmeta">Q' + (ST.q+1) + ' \u00b7 Part ' + q.part + ' \u00b7 ' + q.level + ' level</div>';
+  h += '<div class="qtext">' + q.q + '</div>';
+  if(q.hint) h += '<div class="hint">' + q.hint + '</div>';
+  h += '<textarea id="ans" placeholder="Write your answer here\u2026 (2\u20133 sentences max)" rows="5">' + esc(ST.ans[ST.q]||'') + '</textarea>';
+  document.getElementById('e-q').innerHTML = h;
+  const ta = document.getElementById('ans');
+  ta.addEventListener('input', e=>{ ST.ans[ST.q]=e.target.value; });
+  ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
+  document.getElementById('btn-prev').style.visibility = ST.q>0?'visible':'hidden';
+  document.getElementById('btn-next').textContent = ST.q<t-1?'Next \u2192':'Submit exam \u2192';
+}
+
+function nav(d){
+  const ta = document.getElementById('ans');
+  if(ta) ST.ans[ST.q] = ta.value;
+  if(d===1 && ST.q===QS.length-1){ submitExam(); return; }
+  ST.q = Math.max(0, Math.min(QS.length-1, ST.q+d));
+  renderQ();
+}
+
+async function submitExam(){
+  if(ST.timerInterval){ clearInterval(ST.timerInterval); ST.timerInterval=null; }
+  if(ST.extraChecker){ clearInterval(ST.extraChecker); ST.extraChecker=null; }
+  show('s-grading');
+  const results = [];
+  for(let i=0;i<QS.length;i++){
+    document.getElementById('g-msg').textContent = 'Grading question ' + (i+1) + ' of ' + QS.length + '\u2026';
+    document.getElementById('g-prog').style.width = Math.round(((i+1)/QS.length)*100) + '%';
+    results.push(await gradeOne(QS[i], ST.ans[i]||'', i));
+    await new Promise(r=>setTimeout(r,200));
+  }
+  const grade = calcGrade(results);
+  if(ST.aid){
+    try{ await sb.from('exam_attempts').update({grade,status:'completed',answers:ST.ans,results,completed_at:new Date().toISOString()}).eq('id',ST.aid); }
+    catch(e){ console.error('Save error',e); }
+  }
+  showResults(grade, results);
+}
+
+async function gradeOne(q, ans, idx){
+  const prompt =
+    'You are grading a supply chain management exam. Student may answer in English or Arabic.\n\n' +
+    'QUESTION: ' + q.q + '\n' +
+    (q.hint?'HINT GIVEN: '+q.hint+'\n':'') +
+    (q.scenario?'CONTEXT: '+q.scenario+'\n':'') +
+    '\nPASS CRITERIA (' + q.level + '): ' + q.pass_criteria + '\n' +
+    'IF FAILED EXPLAIN: ' + q.fail_reason + '\n' +
+    '\nSTUDENT ANSWER: ' + (ans||'(no answer)') + '\n' +
+    '\nRespond ONLY with this JSON:\n' +
+    '{"passed":true,"feedback":"1-2 sentence feedback in same language as student"}\n' +
+    'or\n' +
+    '{"passed":false,"feedback":"What was missing and what was needed, in same language as student"}';
+  try{
+    const resp = await fetch(EDGE_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    if(!resp.ok){ const t=await resp.text(); console.error('Edge error Q'+(idx+1)+':',resp.status,t); return {idx,passed:false,feedback:'Grading error ('+resp.status+'). Answer saved.'}; }
+    const data = await resp.json();
+    const raw = data?.content?.[0]?.text||'';
+    const m = raw.match(/\{[\s\S]*?\}/);
+    if(!m) return {idx,passed:false,feedback:'Could not parse grade. Answer saved.'};
+    const p = JSON.parse(m[0]);
+    return {idx,passed:p.passed===true,feedback:typeof p.feedback==='string'&&p.feedback.length>2?p.feedback:'See instructor.'};
+  }catch(e){ console.error('gradeOne error Q'+(idx+1)+':',e); return {idx,passed:false,feedback:'Network error. Answer saved.'}; }
+}
+
+function calcGrade(results){
+  const pIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='P1'||QS[i].level==='P2');
+  const mIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='M');
+  const dIdx = QS.map((q,i)=>i).filter(i=>QS[i].level==='D');
+  const pct = arr => arr.length===0?1:arr.filter(i=>results[i]&&results[i].passed).length/arr.length;
+  if(pct(pIdx)<0.75) return 'U';
+  if(pct(mIdx)<0.75) return 'P';
+  if(pct(dIdx)<0.75) return 'M';
+  return 'D';
+}
+
+function showResults(grade, results){
+  show('s-results');
+  const gl={D:'Distinction',M:'Merit',P:'Pass',U:'Ungraded'};
+  const gc={D:'#085041',M:'#0C447C',P:'#633806',U:'#C00000'};
+  const gs={D:'Excellent — distinction-level understanding across all topics.',M:'Good work — passed all P and M criteria. Review the D questions below.',P:'You passed — review the M and D questions to improve.',U:'Some foundational questions were not answered correctly. Review the feedback below.'};
+  document.getElementById('r-name').textContent = ST.name+' \u00b7 '+ST.sid;
+  document.getElementById('r-head').textContent = 'Overall grade: '+gl[grade];
+  document.getElementById('r-sub').textContent = gs[grade];
+  document.getElementById('r-grade').textContent = grade;
+  document.getElementById('r-grade').style.color = gc[grade];
+  document.getElementById('r-detail').innerHTML = results.map((r,i)=>{
+    const q=QS[i];
+    const fb=r.feedback&&r.feedback!=='undefined'&&r.feedback.length>2?r.feedback:'See instructor.';
+    const bl=r.passed?'Earned '+q.level:'Did not earn '+q.level;
+    const bc=r.passed?'bd':'bu';
+    return '<div class="ritem">'+
+      '<div class="dot '+(r.passed?'dot-ok':'dot-no')+'">'+(r.passed?'&#10003;':'&#10007;')+'</div>'+
+      '<div style="flex:1">'+
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">'+
+          '<span style="font-size:13px;font-weight:600">Q'+(i+1)+' \u2014 '+q.label+'</span>'+
+          '<span class="badge '+bc+'">'+bl+'</span>'+
+        '</div>'+
+        (r.passed?'<div class="pass-box">&#10003; '+esc(fb)+'</div>':'<div class="miss-box"><strong>What you missed:</strong> '+esc(fb)+'</div>')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function show(id){
+  ['s-closed','s-login','s-exam','s-grading','s-results'].forEach(s=>{ document.getElementById(s).style.display=s===id?'block':'none'; });
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+init();
+</script>
+</body>
+</html>
