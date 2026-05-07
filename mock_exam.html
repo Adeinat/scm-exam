@@ -187,7 +187,7 @@ const QS = [
    q:"Q4. What strategic fit challenge does this expansion create? Name the specific concept that addresses it and explain in one sentence how StyleNow should apply it.",
    pass_criteria:"Identifies the conflict between two different supply chain needs. Names tailored supply chain. Explains applying different strategies to each product segment.",
    fail_reason:"The challenge is that limited-edition drops need a RESPONSIVE supply chain while classics need an EFFICIENT one — running both through the same system creates misalignment. The concept is TAILORED SUPPLY CHAIN: StyleNow should maintain fast, flexible sourcing for drops and a separate low-cost, high-volume channel for classics.",
-   ar_scenario:"قررت StyleNow إضافة خط "classics" يشمل أحذية بيضاء بسيطة إلى جانب إصداراتها المحدودة. سيُباع الخطان عبر نفس الموقع الإلكتروني والمستودعات.",
+   ar_scenario:"قررت StyleNow إضافة خط classics يشمل أحذية بيضاء بسيطة إلى جانب إصداراتها المحدودة. سيُباع الخطان عبر نفس الموقع الإلكتروني والمستودعات.",
    ar_q:"س4. ما تحدي الـ strategic fit الذي يُفرزه هذا التوسع؟ اذكر المفهوم المحدد من المقرر الذي يُعالج هذه المشكلة، واشرح في جملة واحدة كيف تُطبّقه StyleNow."},
 
   // ── TOPIC 4: Information Lever, Product Life Cycle ───────────────────
@@ -448,7 +448,7 @@ function renderQ(){
   document.getElementById('e-q').innerHTML = h;
   const ta = document.getElementById('ans');
   ta.addEventListener('input', e=>{ ST.ans[ST.q]=e.target.value; });
-  //ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
+  ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
   document.getElementById('btn-prev').style.visibility = ST.q>0?'visible':'hidden';
   document.getElementById('btn-next').textContent = ST.q<t-1?'Next \u2192':'Submit exam \u2192';
 }
