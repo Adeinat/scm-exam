@@ -349,7 +349,7 @@ const QS = [
 
 ];
 
-let ST = {name:'',sid:'',q:0,ans:{},aid:null,timerInterval:null,extraChecker:null};
+let ST = {name:'',sid:'',q:0,ans:{},aid:null,timerInterval:null,extraChecker:null,autoSave:null,pinger:null};
 
 async function init(){
   try{
@@ -370,7 +370,7 @@ async function doLogin(){
   const btn = document.getElementById('btn-login');
   btn.disabled=true; btn.innerHTML='<span class="spin"></span> Loading&#8230;';
   try{
-    const {data:prev} = await sb.from('exam_attempts').select('id,grade,created_at,status').eq('student_id',sid).order('created_at',{ascending:false});
+    const {data:prev} = await sb.from('exam_attempts').select('id,grade,created_at,status,answers,started_at').eq('student_id',sid).order('created_at',{ascending:false});
     const done = prev ? prev.filter(a=>a.status==='completed') : [];
     if(done.length>0){
       const a=done[0];
@@ -381,7 +381,42 @@ async function doLogin(){
     const {data:settings} = await sb.from('exam_settings').select('exam_minutes,extra_minutes').eq('id',1).single();
     const examMins = settings?.exam_minutes || 70;
     const extraMins = settings?.extra_minutes || 0;
-    const {data:na} = await sb.from('exam_attempts').insert({student_name:name,student_id:sid,grade:null,status:'in_progress'}).select().single();
+
+    // Check if student has an in-progress attempt
+    const inProgress = prev ? prev.find(a=>a.status==='in_progress') : null;
+    if(inProgress){
+      const startedAt = new Date(inProgress.started_at || inProgress.created_at);
+      const totalMins = examMins + (extraMins || 0);
+      const elapsedMins = (Date.now() - startedAt.getTime()) / 60000;
+      const remainingMins = totalMins - elapsedMins;
+
+      if(remainingMins <= 0){
+        // Time window expired — auto-submit saved answers
+        ST.name=name; ST.sid=sid; ST.aid=inProgress.id;
+        ST.ans = inProgress.answers || {};
+        btn.disabled=false; btn.innerHTML='Start exam →';
+        show('s-grading');
+        await submitExam();
+        return;
+      }
+
+      // Check if another browser is active (pinged in last 60 seconds)
+      const lastPing = inProgress.last_ping ? new Date(inProgress.last_ping) : null;
+      const secsSincePing = lastPing ? (Date.now() - lastPing.getTime()) / 1000 : 999;
+      if(secsSincePing < 60){
+        err.innerHTML = '⚠️ This exam is already open in another browser or tab. Please close the other window first, then try again.';
+        err.style.display='block'; btn.disabled=false; btn.innerHTML='Start exam →'; return;
+      }
+
+      // Exam window still open and no other active browser — restore session
+      ST.name=name; ST.sid=sid; ST.aid=inProgress.id; ST.q=0;
+      ST.ans = inProgress.answers || {};
+      show('s-exam'); renderQ();
+      startTimer(Math.ceil(remainingMins), extraMins);
+      btn.disabled=false; btn.innerHTML='Start exam →'; return;
+    }
+
+    const {data:na} = await sb.from('exam_attempts').insert({student_name:name,student_id:sid,grade:null,status:'in_progress',started_at:new Date().toISOString()}).select().single();
     ST.name=name; ST.sid=sid; ST.aid=na?.id; ST.q=0; ST.ans={};
     show('s-exam'); renderQ();
     startTimer(examMins, extraMins);
@@ -394,6 +429,20 @@ function startTimer(examMins, startingExtra){
   let lastExtra = startingExtra || 0;
   let warned10 = false;
   const el = document.getElementById('timer');
+  // Auto-save answers and ping every 30 seconds
+  ST.autoSave = setInterval(async ()=>{
+    if(ST.aid){
+      const ta = document.getElementById('ans');
+      if(ta) ST.ans[ST.q] = ta.value;
+      try{ await sb.from('exam_attempts').update({answers:ST.ans, last_ping:new Date().toISOString()}).eq('id',ST.aid); }catch(e){}
+    }
+  }, 30000);
+
+  // Initial ping immediately on start
+  if(ST.aid){
+    (async()=>{ try{ await sb.from('exam_attempts').update({last_ping:new Date().toISOString()}).eq('id',ST.aid); }catch(e){} })();
+  }
+
   ST.extraChecker = setInterval(async ()=>{
     try{
       const {data} = await sb.from('exam_settings').select('extra_minutes').eq('id',1).single();
@@ -464,6 +513,8 @@ function nav(d){
 async function submitExam(){
   if(ST.timerInterval){ clearInterval(ST.timerInterval); ST.timerInterval=null; }
   if(ST.extraChecker){ clearInterval(ST.extraChecker); ST.extraChecker=null; }
+  if(ST.autoSave){ clearInterval(ST.autoSave); ST.autoSave=null; }
+  if(ST.pinger){ clearInterval(ST.pinger); ST.pinger=null; }
   show('s-grading');
   const results = [];
   for(let i=0;i<QS.length;i++){
