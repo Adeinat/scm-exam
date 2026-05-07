@@ -497,7 +497,7 @@ function renderQ(){
   document.getElementById('e-q').innerHTML = h;
   const ta = document.getElementById('ans');
   ta.addEventListener('input', e=>{ ST.ans[ST.q]=e.target.value; });
-  ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
+  //ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
   document.getElementById('btn-prev').style.visibility = ST.q>0?'visible':'hidden';
   document.getElementById('btn-next').textContent = ST.q<t-1?'Next \u2192':'Submit exam \u2192';
 }
