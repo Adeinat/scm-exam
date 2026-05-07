@@ -228,7 +228,7 @@ const QS = [
    scenario:"BikeJO sells mountain bikes. Annual demand = 1,200 bikes/year. Fixed ordering cost = JD 500 per order. Each bike costs JD 800. Annual holding cost rate = 25%.",
    ar_scenario:"تبيع BikeJO دراجات جبلية. الطلب السنوي = 1,200 دراجة في السنة. Fixed ordering cost = 500 دينار لكل طلب. سعر الدراجة = 800 دينار. Annual holding cost rate = 25%.",
    q:"Q8. Calculate the Economic Order Quantity (EOQ) for BikeJO. Show all steps.",
-   ar_q:"س8. احسب الكمية الاقتصادية للطلب (EOQ) لشركة BikeJO. اعرض جميع الخطوات.",
+   ar_q:"س8. احسب الـ EOQ لشركة BikeJO. اعرض جميع الخطوات.",
    hint:"EOQ = \u221a(2 \u00d7 Annual Demand \u00d7 Fixed Order Cost \u00f7 Annual Holding Cost per unit)\n\nAnnual Holding Cost per unit = Unit Cost \u00d7 Holding Rate",
    ar_hint:"EOQ = \u221a(2 \u00d7 الطلب السنوي \u00d7 Fixed Order Cost \u00f7 Annual Holding Cost لكل وحدة)\n\nAnnual Holding Cost لكل وحدة = سعر الوحدة \u00d7 Holding Rate",
    pass_criteria:"Annual holding cost = 800 \u00d7 0.25 = JD 200. EOQ = \u221a(2 \u00d7 1200 \u00d7 500 \u00f7 200) = \u221a6,000 = 77.5 \u2248 78 bikes.",
@@ -246,9 +246,9 @@ const QS = [
   // Q10 — Safety Stock Basics (P1)
   {part:"E",label:"Safety Stock",level:"P1",
    scenario:"PharmaCo sells a drug with average weekly demand of 400 units and standard deviation of 60 units. Lead time = 3 weeks. The reorder point is set at 1,350 units.",
-   ar_scenario:"تبيع PharmaCo دواءً بمتوسط طلب أسبوعي قدره 400 وحدة وانحراف معياري 60 وحدة. مدة التوريد (Lead time) = 3 أسابيع. نقطة إعادة الطلب (Reorder Point) = 1,350 وحدة.",
+   ar_scenario:"تبيع PharmaCo دواءً بمتوسط طلب أسبوعي قدره 400 وحدة وانحراف معياري 60 وحدة. Lead time = 3 أسابيع. Reorder Point = 1,350 وحدة.",
    q:"Q10. Calculate: (a) the expected demand during lead time, and (b) the safety stock at this reorder point.",
-   ar_q:"س10. احسب: (أ) الطلب المتوقع خلال فترة الـ Lead time، و(ب) مخزون الأمان (Safety Stock) عند نقطة إعادة الطلب هذه.",
+   ar_q:"س10. احسب: (أ) الطلب المتوقع خلال فترة الـ Lead time، و(ب) الـ Safety Stock عند الـ Reorder Point هذه.",
    pass_criteria:"(a) Expected demand during LT = 400 \u00d7 3 = 1,200 units. (b) Safety stock = 1,350 \u2212 1,200 = 150 units.",
    fail_reason:"(a) Expected demand during lead time = average weekly demand \u00d7 lead time weeks = 400 \u00d7 3 = 1,200 units. (b) Safety stock = Reorder Point \u2212 Expected demand during lead time = 1,350 \u2212 1,200 = 150 units."},
 
@@ -257,7 +257,7 @@ const QS = [
    scenario:"PharmaCo wants to achieve a 95% Cycle Service Level (CSL). The standard deviation of demand during the lead time period is 104 units. Use z = 1.65 for 95% CSL.",
    ar_scenario:"تسعى PharmaCo إلى تحقيق Cycle Service Level (CSL) بنسبة 95%. الانحراف المعياري للطلب خلال فترة الـ Lead time = 104 وحدات. استخدم z = 1.65 لمستوى 95%.",
    q:"Q11. Calculate the safety stock needed to achieve 95% CSL. Then explain in one sentence the trade-off PharmaCo faces if it wants to increase the service level from 95% to 99%.",
-   ar_q:"س11. احسب الـ Safety Stock اللازم لتحقيق 95% CSL. ثم اشرح في جملة واحدة الـ trade-off الذي تواجهه PharmaCo إذا أرادت رفع مستوى الخدمة من 95% إلى 99%.",
+   ar_q:"س11. احسب الـ Safety Stock اللازم لتحقيق 95% CSL. ثم اشرح في جملة واحدة الـ trade-off الذي تواجهه PharmaCo إذا أرادت رفع الـ service level من 95% إلى 99%.",
    hint:"Safety Stock = z \u00d7 \u03c3_LT",
    ar_hint:"Safety Stock = z \u00d7 \u03c3_LT",
    pass_criteria:"Safety stock = 1.65 \u00d7 104 = 171.6 \u2248 172 units. Trade-off correctly identified: safety stock grows rapidly as service level increases, raising holding costs significantly.",
@@ -339,9 +339,9 @@ const QS = [
    scenario:"Jordan Mills supplies flour to two markets: Amman (demand D\u2081 = 70,000 kg/yr) and Zarqa (demand D\u2082 = 50,000 kg/yr). Two factory sites: Site A in Rusaifa (capacity K_A = 80,000 kg, fixed cost f_A = JD 160,000/yr) and Site B in Sahab (capacity K_B = 90,000 kg, fixed cost f_B = JD 190,000/yr).\n\nShipping costs (JD per kg):\n  A \u2192 Amman: c_A1 = 2.50\n  A \u2192 Zarqa: c_A2 = 1.80\n  B \u2192 Amman: c_B1 = 2.10\n  B \u2192 Zarqa: c_B2 = 3.20",
    ar_scenario:"تُورد Jordan Mills الدقيق لسوقين: عمان (طلب D\u2081 = 70,000 كجم/سنة) والزرقاء (طلب D\u2082 = 50,000 كجم/سنة). موقعان مقترحان للمصنع: الموقع A في الرصيفة (capacity K_A = 80,000 كجم، fixed cost f_A = 160,000 دينار/سنة) والموقع B في سحاب (capacity K_B = 90,000 كجم، fixed cost f_B = 190,000 دينار/سنة).\n\nتكاليف الشحن (دينار/كجم):\n  A \u2192 عمان: c_A1 = 2.50\n  A \u2192 الزرقاء: c_A2 = 1.80\n  B \u2192 عمان: c_B1 = 2.10\n  B \u2192 الزرقاء: c_B2 = 3.20",
    q:"Q19. For this capacitated plant location model:\n(a) Define all decision variables using standard notation.\n(b) Write the complete objective function and explain what each group of terms represents.\n(c) Write ALL constraint equations. For each, state in one sentence what it enforces.\nInclude: demand constraints, capacity constraints, linking constraints, binary and non-negativity constraints.",
-   ar_q:"س19. لنموذج الـ capacitated plant location هذا:\n(أ) عرِّف جميع متغيرات القرار (decision variables) باستخدام الترميز القياسي.\n(ب) اكتب دالة الهدف (objective function) الكاملة واشرح ما تُمثّله كل مجموعة من الحدود.\n(ج) اكتب جميع معادلات القيود (constraints). لكل قيد، اذكر في جملة واحدة ما الذي يُطبّقه.\nتضمّن: قيود الطلب، قيود الطاقة، قيود الربط، القيود الثنائية وعدم السلبية.",
+   ar_q:"س19. لنموذج الـ capacitated plant location هذا:\n(أ) عرِّف جميع الـ decision variables باستخدام الترميز القياسي.\n(ب) اكتب الـ objective function الكاملة واشرح ما تُمثّله كل مجموعة من الحدود.\n(ج) اكتب جميع معادلات القيود (constraints). لكل قيد، اذكر في جملة واحدة ما الذي يُطبّقه.\nتضمّن: demand constraints، capacity constraints، linking constraints، binary constraints، وnon-negativity constraints.",
    hint:"Decision variables: binary y_i for each site + continuous x_ij for each site-market pair\nObjective: minimise fixed costs + shipping costs\nConstraints: demand must be met, capacity not exceeded, can only ship from open sites",
-   ar_hint:"متغيرات القرار: ثنائية y_i لكل موقع + مستمرة x_ij لكل زوج موقع-سوق\nدالة الهدف: تصغير التكاليف الثابتة + تكاليف الشحن\nالقيود: تلبية الطلب، عدم تجاوز الطاقة، الشحن من المواقع المفتوحة فقط",
+   ar_hint:"Decision variables: binary y_i لكل موقع + continuous x_ij لكل زوج موقع-سوق\nObjective function: تصغير التكاليف الثابتة + تكاليف الشحن\nالقيود: تلبية الطلب، عدم تجاوز الطاقة، الشحن من المواقع المفتوحة فقط",
    pass_criteria:"Variables: y_A, y_B binary; x_A1, x_A2, x_B1, x_B2 \u22650. Objective: Min Z = 160,000y_A + 190,000y_B + 2.5x_A1 + 1.8x_A2 + 2.1x_B1 + 3.2x_B2. All 5 constraint types present: demand (=), capacity (\u2264), linking (x_A1+x_A2 \u2264 80,000\u00b7y_A etc), binary, non-negativity.",
    fail_reason:"Variables: y_A=1 if A open, y_B=1 if B open; x_A1=kg A\u2192Amman, x_A2=kg A\u2192Zarqa, x_B1=kg B\u2192Amman, x_B2=kg B\u2192Zarqa. Objective: Min Z=160,000y_A+190,000y_B+2.5x_A1+1.8x_A2+2.1x_B1+3.2x_B2. Demand: x_A1+x_B1=70,000 and x_A2+x_B2=50,000. Capacity: x_A1+x_A2\u226480,000 and x_B1+x_B2\u226490,000. Linking: x_A1+x_A2\u226480,000\u00b7y_A and x_B1+x_B2\u226490,000\u00b7y_B. Binary: y_A,y_B\u2208{0,1}. Non-negativity: all x_ij\u22650."}
 ];
