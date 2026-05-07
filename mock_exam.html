@@ -353,7 +353,7 @@ let ST = {name:'',sid:'',q:0,ans:{},aid:null,timerInterval:null,extraChecker:nul
 
 async function init(){
   try{
-    const {data,error} = await sb.from('exam_settings').select('is_open,exam_minutes').eq('id',1).single();
+    const {data,error} = await sb.from('exam_settings').select('is_open,exam_minutes').eq('id',2).single();
     if(error||!data||!data.is_open){show('s-closed');return;}
     const mins = data.exam_minutes || 70;
     document.getElementById('exam-info').textContent = mins + ' minutes \u00b7 21 questions \u00b7 One attempt only \u00b7 Calculators permitted';
@@ -378,7 +378,7 @@ async function doLogin(){
       err.innerHTML='You have already submitted this exam on '+new Date(a.created_at).toLocaleDateString()+'.<br>Your grade: <strong>'+(gl[a.grade]||a.grade)+'</strong>. Only one attempt is allowed.';
       err.style.display='block'; btn.disabled=false; btn.innerHTML='Start exam &#8594;'; return;
     }
-    const {data:settings} = await sb.from('exam_settings').select('exam_minutes,extra_minutes').eq('id',1).single();
+    const {data:settings} = await sb.from('exam_settings').select('exam_minutes,extra_minutes').eq('id',2).single();
     const examMins = settings?.exam_minutes || 70;
     const extraMins = settings?.extra_minutes || 0;
 
@@ -445,7 +445,7 @@ function startTimer(examMins, startingExtra){
 
   ST.extraChecker = setInterval(async ()=>{
     try{
-      const {data} = await sb.from('exam_settings').select('extra_minutes').eq('id',1).single();
+      const {data} = await sb.from('exam_settings').select('extra_minutes').eq('id',2).single();
       const newExtra = data?.extra_minutes || 0;
       if(newExtra > lastExtra){
         const diff = newExtra - lastExtra;
