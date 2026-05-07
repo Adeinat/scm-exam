@@ -89,15 +89,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
     <h1>SCM 106321 &#8212; Mock Exam</h1>
     <p class="sub">Al-Hussein Technical University &#183; Dr. Hamza Adeinat &#183; Spring 2026</p>
   </div>
-  <div class="card" style="margin-bottom:1rem">
-    <table class="pmd">
-      <tr><th>Grade</th><th>How it is calculated</th></tr>
-      <tr><td><span class="badge bd">D</span></td><td>At least 75% of P, M, and D questions passed</td></tr>
-      <tr><td><span class="badge bm">M</span></td><td>At least 75% of P and M questions passed; less than 75% of D questions passed</td></tr>
-      <tr><td><span class="badge bp">P</span></td><td>At least 75% of P questions passed; less than 75% of M questions passed</td></tr>
-      <tr><td><span class="badge bu">U</span></td><td>Less than 75% of P questions passed</td></tr>
-    </table>
-  </div>
+
   <div class="card">
     <h3 style="margin-bottom:14px">Sign in to begin</h3>
     <div id="login-err" class="err" style="display:none"></div>
@@ -169,34 +161,43 @@ const QS = [
    scenario:"NileFood is a food company in Jordan. It buys wheat from 30 farms, mills it at two factories, stores flour at five regional warehouses, and sells to 150 bakeries. Each bakery serves thousands of end consumers daily.",
    q:"Q1. A new analyst says NileFood's supply chain is a simple chain from farms to bakeries. A senior manager disagrees and calls it a network. Who is right? What does the network view capture that a simple chain misses?",
    pass_criteria:"Student correctly states the supply chain is a network and explains that networks capture multiple suppliers, facilities, and customers with complex interconnections — not just a linear sequence.",
-   fail_reason:"A supply chain is a NETWORK — it has multiple suppliers, multiple facilities, and multiple customer connections running simultaneously. A simple chain view misses these parallel flows and the complexity of managing multiple paths at once."},
+   fail_reason:"A supply chain is a NETWORK — it has multiple suppliers, multiple facilities, and multiple customer connections running simultaneously. A simple chain view misses these parallel flows and the complexity of managing multiple paths at once.",
+   ar_scenario:"NileFood شركة غذائية أردنية تشتري القمح من 30 مزرعة، وتطحنه في مصنعين، وتخزّن الدقيق في 5 مستودعات إقليمية، وتبيع لـ 150 مخبزاً. كل مخبز يخدم آلاف المستهلكين يومياً.",
+   ar_q:"س1. يقول محلل جديد إن الـ supply chain في NileFood مجرد سلسلة بسيطة من المزارع إلى المخابز. يختلف معه مدير أقدم ويصفها بأنها network. من على حق؟ وماذا يُضيف مفهوم الـ network على فكرة السلسلة البسيطة؟"},
 
   // ── TOPIC 2: Push/Pull, Competitive Strategy, SC Strategy ────────────
   {part:"A",label:"Supply Chain Fundamentals",level:"P2",
    scenario:"ArabiShop is an e-commerce company. Its competitive strategy targets customers who want the widest possible product variety delivered within 24 hours anywhere in Jordan.",
    q:"Q2. What does ArabiShop's competitive strategy tell us about what its supply chain strategy must prioritise? Name one specific supply chain capability ArabiShop must have that a low-cost supermarket chain would not need.",
    pass_criteria:"Student correctly links the competitive strategy (variety + speed) to a responsive supply chain strategy. Names at least one specific capability such as fast order fulfilment, flexible inventory, or distributed warehouses.",
-   fail_reason:"ArabiShop's competitive strategy targets customers who want variety and speed — so its supply chain strategy must prioritise RESPONSIVENESS. One capability needed: distributed fulfilment centres close to customers, or flexible inventory systems that can handle thousands of SKUs with fast picking."},
+   fail_reason:"ArabiShop's competitive strategy targets customers who want variety and speed — so its supply chain strategy must prioritise RESPONSIVENESS. One capability needed: distributed fulfilment centres close to customers, or flexible inventory systems that can handle thousands of SKUs with fast picking.",
+   ar_scenario:"ArabiShop موقع تجارة إلكترونية. تقوم competitive strategy الشركة على تقديم أوسع تشكيلة ممكنة من المنتجات مع التوصيل إلى أي مكان في الأردن خلال 24 ساعة.",
+   ar_q:"س2. ماذا تُخبرنا الـ competitive strategy لـ ArabiShop عن أولويات الـ supply chain strategy الواجب اعتمادها؟ اذكر capability واحدة محددة تحتاجها ArabiShop ولا تحتاجها سلسلة سوبرماركت تعتمد على التكلفة المنخفضة."},
+
 
   // ── TOPIC 3: Implied Uncertainty, Responsiveness, Strategic Fit ──────
   {part:"B",label:"Strategic Fit and Uncertainty",level:"P2",
    scenario:"StyleNow sells limited-edition sneakers that sell out in hours. PlanShoe sells standard work boots in fixed sizes that retailers reorder every month.",
    q:"Q3. Which product has higher implied demand uncertainty? What type of supply chain does each product require? Name the type and give one reason.",
-   pass_criteria:"StyleNow correctly identified as higher implied uncertainty. StyleNow needs a responsive supply chain. PlanShoe needs an efficient supply chain. At least one reason given for each.",
-   fail_reason:"StyleNow has HIGHER implied uncertainty — demand is unpredictable and spikes suddenly. It needs a RESPONSIVE supply chain (fast production, flexible capacity). PlanShoe has LOW uncertainty — stable, predictable demand. It needs an EFFICIENT supply chain (low cost, high utilization, long lead times acceptable)."},
+   pass_criteria:"StyleNow correctly identified as higher implied uncertainty AND needs responsive supply chain. PlanShoe correctly identified as lower uncertainty AND needs efficient supply chain. Even brief reasons like unpredictable demand or stable demand are sufficient to pass.",
+   fail_reason:"StyleNow has HIGHER implied uncertainty — demand is unpredictable and spikes suddenly. It needs a RESPONSIVE supply chain. PlanShoe has LOW uncertainty — stable demand. It needs an EFFICIENT supply chain focused on low cost. Must identify both products correctly with their supply chain type."},
 
   {part:"B",label:"Strategic Fit and Uncertainty",level:"M",
    scenario:"StyleNow decides to expand by adding a 'classics' line of plain white sneakers alongside its limited-edition drops. Both lines will be sold through the same website and warehouses.",
    q:"Q4. What strategic fit challenge does this expansion create? Name the specific concept that addresses it and explain in one sentence how StyleNow should apply it.",
    pass_criteria:"Identifies the conflict between two different supply chain needs. Names tailored supply chain. Explains applying different strategies to each product segment.",
-   fail_reason:"The challenge is that limited-edition drops need a RESPONSIVE supply chain while classics need an EFFICIENT one — running both through the same system creates misalignment. The concept is TAILORED SUPPLY CHAIN: StyleNow should maintain fast, flexible sourcing for drops and a separate low-cost, high-volume channel for classics."},
+   fail_reason:"The challenge is that limited-edition drops need a RESPONSIVE supply chain while classics need an EFFICIENT one — running both through the same system creates misalignment. The concept is TAILORED SUPPLY CHAIN: StyleNow should maintain fast, flexible sourcing for drops and a separate low-cost, high-volume channel for classics.",
+   ar_scenario:"قررت StyleNow إضافة خط "classics" يشمل أحذية بيضاء بسيطة إلى جانب إصداراتها المحدودة. سيُباع الخطان عبر نفس الموقع الإلكتروني والمستودعات.",
+   ar_q:"س4. ما تحدي الـ strategic fit الذي يُفرزه هذا التوسع؟ اذكر المفهوم المحدد من المقرر الذي يُعالج هذه المشكلة، واشرح في جملة واحدة كيف تُطبّقه StyleNow."},
 
   // ── TOPIC 4: Information Lever, Product Life Cycle ───────────────────
   {part:"B",label:"Strategic Fit and Uncertainty",level:"P1",
    scenario:"StyleNow invests JD 200,000 in a data analytics platform that analyses social media trends to predict which sneaker styles will sell out in the next 30 days with 80% accuracy.",
    q:"Q5. Which supply chain lever for managing uncertainty does this investment represent? How does it specifically help StyleNow reduce supply chain costs?",
    pass_criteria:"Names information as the lever. Explains that better demand prediction reduces the need for excess inventory or emergency production, cutting costs.",
-   fail_reason:"This is the INFORMATION lever. Better demand forecasting means StyleNow can produce closer to actual demand — reducing excess inventory from overproduction and emergency costs from stockouts. Information replaces buffer inventory as the primary tool for managing uncertainty."},
+   fail_reason:"This is the INFORMATION lever. Better demand forecasting means StyleNow can produce closer to actual demand — reducing excess inventory from overproduction and emergency costs from stockouts. Information replaces buffer inventory as the primary tool for managing uncertainty.",
+   ar_scenario:"استثمرت StyleNow 200,000 دينار في منصة analytics تُحلّل اتجاهات وسائل التواصل الاجتماعي وتتنبأ بالأحذية التي ستنفد خلال 30 يوماً بدقة تبلغ 80%.",
+   ar_q:"س5. ما الـ lever الذي يُمثّله هذا الاستثمار من levers إدارة عدم اليقين في الـ supply chain؟ وكيف يُساعد StyleNow تحديداً على تقليل التكاليف؟"},
 
   // ── TOPIC 5: C2C Cycle ───────────────────────────────────────────────
   {part:"C",label:"Cash-to-Cash Cycle",level:"P1",
@@ -204,13 +205,18 @@ const QS = [
    q:"Q6. Calculate GulfMart's Cash-to-Cash (C2C) cycle. Show each component separately. (C2C = DIO + DSO − DPO)",
    hint:"DIO = 365 ÷ Inventory Turnover, DSO = 365 ÷ AR Turnover, DPO = 365 ÷ AP Turnover",
    pass_criteria:"Correct calculation: DIO = 50.0, DSO = 32.6, DPO = 62.9. C2C = 50.0 + 32.6 − 62.9 = 19.7 days.",
-   fail_reason:"DIO = 365/7.3 = 50.0 days. DSO = 365/11.2 = 32.6 days. DPO = 365/5.8 = 62.9 days. C2C = 50.0 + 32.6 − 62.9 = 19.7 days. Must divide 365 by each turnover ratio — not use the raw numbers."},
+   fail_reason:"DIO = 365/7.3 = 50.0 days. DSO = 365/11.2 = 32.6 days. DPO = 365/5.8 = 62.9 days. C2C = 50.0 + 32.6 − 62.9 = 19.7 days. Must divide 365 by each turnover ratio — not use the raw numbers.",
+   ar_scenario:"أفادت GulfMart بالبيانات التالية: Inventory turnover = 7.3، Accounts Receivable turnover = 11.2، Accounts Payable turnover = 5.8. تعمل الشركة 365 يوماً في السنة.",
+   ar_q:"س6. احسب دورة الـ Cash-to-Cash (C2C) لشركة GulfMart. اعرض كل مكوّن على حدة. (C2C = DIO + DSO − DPO)",
+   ar_hint:"DIO = 365 ÷ Inventory Turnover ، DSO = 365 ÷ AR Turnover ، DPO = 365 ÷ AP Turnover"},
 
   {part:"C",label:"Cash-to-Cash Cycle",level:"M",
    scenario:"GulfMart's finance director wants to improve the C2C cycle. She proposes two actions: (A) negotiate 90-day payment terms with suppliers instead of the current 63 days, and (B) push customers to pay within 15 days by offering a 1% early payment discount.",
    q:"Q7. For each action, state whether it improves the C2C cycle and identify one specific trade-off or risk the company must accept.",
    pass_criteria:"Action A correctly identified as improving C2C (extends DPO). Action B correctly identified as improving C2C (reduces DSO). One specific trade-off for each.",
-   fail_reason:"Action A IMPROVES C2C — longer payment terms extend DPO, reducing the cycle. Trade-off: suppliers may increase prices or reduce service priority. Action B IMPROVES C2C — faster customer payment reduces DSO. Trade-off: the 1% discount reduces revenue and may not be accepted by all customers."},
+   fail_reason:"Action A IMPROVES C2C — longer payment terms extend DPO, reducing the cycle. Trade-off: suppliers may increase prices or reduce service priority. Action B IMPROVES C2C — faster customer payment reduces DSO. Trade-off: the 1% discount reduces revenue and may not be accepted by all customers.",
+   ar_scenario:"تسعى مديرة المالية في GulfMart إلى تحسين دورة الـ C2C، وتقترح إجراءين: (أ) التفاوض مع الموردين على تمديد شروط الدفع إلى 90 يوماً بدلاً من 63 يوماً، (ب) تحفيز العملاء على السداد خلال 15 يوماً مقابل خصم 1%.",
+   ar_q:"س7. لكل إجراء، حدّد ما إذا كان يُحسّن دورة الـ C2C أم لا، واذكر trade-off أو خطراً محدداً يترتب على تطبيقه."},
 
   // ── TOPIC 6: EOQ ─────────────────────────────────────────────────────
   {part:"D",label:"Inventory — EOQ",level:"P1",
@@ -218,60 +224,80 @@ const QS = [
    q:"Q8. Calculate the Economic Order Quantity (EOQ) for BikeJO. Show your working.",
    hint:"EOQ = \u221A(2 \u00d7 Annual Demand \u00d7 Fixed Order Cost \u00f7 Annual Holding Cost per unit)",
    pass_criteria:"Correct calculation: Annual holding cost = 800 × 0.25 = JD 200. EOQ = √(2 × 1200 × 500 / 200) = √6000 = 77.5 ≈ 78 bikes.",
-   fail_reason:"Annual holding cost per unit = 800 × 0.25 = JD 200. EOQ = √(2 × 1200 × 500 ÷ 200) = √(1,200,000 ÷ 200) = √6,000 = 77.5 ≈ 78 bikes per order."},
+   fail_reason:"Annual holding cost per unit = 800 × 0.25 = JD 200. EOQ = √(2 × 1200 × 500 ÷ 200) = √(1,200,000 ÷ 200) = √6,000 = 77.5 ≈ 78 bikes per order.",
+   ar_scenario:"تبيع BikeJO دراجات جبلية. الطلب السنوي = 1,200 دراجة. Fixed ordering cost = 500 دينار لكل طلب. سعر الدراجة = 800 دينار. Annual holding cost rate = 25%.",
+   ar_q:"س8. احسب الكمية الاقتصادية للطلب (EOQ) لشركة BikeJO. اعرض خطوات الحل كاملة.",
+   ar_hint:"EOQ = √(2 × الطلب السنوي × Fixed Order Cost ÷ Annual Holding Cost لكل وحدة)"},
 
   {part:"D",label:"Inventory — EOQ",level:"M",
    scenario:"BikeJO's supplier offers free delivery if BikeJO orders exactly 200 bikes per order instead of the EOQ. The manager considers accepting this offer.",
    q:"Q9. Without calculating the full cost, explain what happens to BikeJO's total inventory costs when it orders 200 instead of 78 bikes. Which cost component increases and which decreases? Should the manager accept if the delivery saving is JD 1,500 per year?",
    pass_criteria:"Correctly identifies that ordering more than EOQ increases holding costs and decreases ordering costs. Recognises that accepting depends on whether savings exceed the cost increase from deviation.",
-   fail_reason:"Ordering MORE than EOQ means HIGHER average inventory → HIGHER holding costs and FEWER orders per year → LOWER ordering costs. The total cost rises because EOQ minimizes total cost. To decide whether to accept: calculate the extra total cost from ordering 200 vs 78, and compare it to the JD 1,500 saving."},
+   fail_reason:"Ordering MORE than EOQ means HIGHER average inventory → HIGHER holding costs and FEWER orders per year → LOWER ordering costs. The total cost rises because EOQ minimizes total cost. To decide whether to accept: calculate the extra total cost from ordering 200 vs 78, and compare it to the JD 1,500 saving.",
+   ar_scenario:"عرض مورد BikeJO توصيلاً مجانياً شريطة أن تطلب الشركة 200 دراجة بالضبط بدلاً من الـ EOQ. يدرس المدير قبول هذا العرض.",
+   ar_q:"س9. دون حساب التكلفة الإجمالية، اشرح ما الذي يحدث لإجمالي تكاليف المخزون عند الطلب بكمية 200 بدلاً من 78. أي مكوّن تكلفة يرتفع وأيهما ينخفض؟ هل ينبغي للمدير قبول العرض إذا كان توفير التوصيل 1,500 دينار سنوياً؟"},
 
   // ── TOPIC 7: Safety Stock and Service Level ──────────────────────────
   {part:"E",label:"Safety Stock",level:"P1",
    scenario:"PharmaCo sells a drug with average weekly demand of 400 units and standard deviation of 60 units. Lead time is 3 weeks. The reorder point is set at 1,350 units.",
    q:"Q10. Calculate: (a) Expected demand during lead time, (b) Safety stock at this reorder point.",
    pass_criteria:"(a) Expected demand during lead time = 400 × 3 = 1,200 units. (b) Safety stock = 1,350 − 1,200 = 150 units.",
-   fail_reason:"(a) Expected demand during lead time = average weekly demand × lead time = 400 × 3 = 1,200 units. (b) Safety stock = reorder point − expected demand during lead time = 1,350 − 1,200 = 150 units."},
+   fail_reason:"(a) Expected demand during lead time = average weekly demand × lead time = 400 × 3 = 1,200 units. (b) Safety stock = reorder point − expected demand during lead time = 1,350 − 1,200 = 150 units.",
+   ar_scenario:"تبيع PharmaCo أدويةً بمتوسط طلب أسبوعي قدره 400 وحدة وانحراف معياري 60 وحدة. مدة التوريد (Lead time) = 3 أسابيع. نقطة إعادة الطلب (Reorder Point) = 1,350 وحدة.",
+   ar_q:"س10. احسب: (أ) الطلب المتوقع خلال فترة الـ Lead time، (ب) مخزون الأمان (Safety Stock) عند نقطة إعادة الطلب هذه."},
 
   {part:"E",label:"Safety Stock",level:"M",
    scenario:"PharmaCo wants to achieve a 95% cycle service level. The standard deviation of demand during lead time is 104 units. (z = 1.65 for 95% CSL)",
    q:"Q11. Calculate the safety stock needed to achieve 95% CSL. Then explain in one sentence the trade-off PharmaCo faces if it wants to increase the service level from 95% to 99%.",
    pass_criteria:"Safety stock = 1.65 × 104 = 171.6 ≈ 172 units. Trade-off correctly identified: higher service level requires disproportionately more safety stock, increasing holding costs significantly.",
-   fail_reason:"Safety stock = z × σ_LT = 1.65 × 104 = 171.6 ≈ 172 units. Trade-off: safety stock GROWS RAPIDLY as service level increases — going from 95% to 99% requires much more than a 4% increase in safety stock, significantly raising inventory holding costs."},
+   fail_reason:"Safety stock = z × σ_LT = 1.65 × 104 = 171.6 ≈ 172 units. Trade-off: safety stock GROWS RAPIDLY as service level increases — going from 95% to 99% requires much more than a 4% increase in safety stock, significantly raising inventory holding costs.",
+   ar_scenario:"تسعى PharmaCo إلى تحقيق Cycle Service Level بنسبة 95%. الانحراف المعياري للطلب خلال فترة الـ Lead time = 104 وحدات. (z = 1.65 لمستوى 95%)",
+   ar_q:"س11. احسب الـ Safety Stock اللازم لتحقيق 95% CSL. ثم اشرح في جملة واحدة: ما الـ trade-off الذي تواجهه PharmaCo إذا أرادت رفع مستوى الخدمة من 95% إلى 99%؟"},
 
   {part:"E",label:"Safety Stock",level:"D",
    scenario:"PharmaCo currently has 50 retail stores each holding safety stock independently. Each store has average weekly demand of 80 units, standard deviation 30 units, lead time 2 weeks. They are considering centralising into one distribution centre serving all 50 stores. z = 1.65 for 95% CSL.",
    q:"Q12. Calculate the safety stock needed: (a) across all 50 stores independently, (b) at the single centralised DC. What is the saving from centralisation? Show all steps.",
    hint:"Centralised \u03c3_LT = \u221A(n) \u00d7 individual \u03c3_LT where individual \u03c3_LT = \u03c3 \u00d7 \u221A(Lead Time)",
    pass_criteria:"Individual σ_LT = 30 × √2 = 42.4. Individual SS = 1.65 × 42.4 = 70.0 units. Total decentralised SS = 70 × 50 = 3,500 units. Central σ_LT = √50 × 42.4 = 299.7. Central SS = 1.65 × 299.7 = 494.5 ≈ 495 units. Saving = 3,500 − 495 = 3,005 units.",
-   fail_reason:"Step 1: Individual σ_LT = 30 × √2 = 42.4. Step 2: Individual SS = 1.65 × 42.4 = 70 units. Step 3: Total decentralised = 70 × 50 = 3,500 units. Step 4: Central σ_LT = √50 × 42.4 = 299.7. Step 5: Central SS = 1.65 × 299.7 = 495 units. Saving = 3,500 − 495 = 3,005 units."},
+   fail_reason:"Step 1: Individual σ_LT = 30 × √2 = 42.4. Step 2: Individual SS = 1.65 × 42.4 = 70 units. Step 3: Total decentralised = 70 × 50 = 3,500 units. Step 4: Central σ_LT = √50 × 42.4 = 299.7. Step 5: Central SS = 1.65 × 299.7 = 495 units. Saving = 3,500 − 495 = 3,005 units.",
+   ar_scenario:"لدى PharmaCo 50 متجراً يحتفظ كل منها بـ Safety Stock بصورة مستقلة. متوسط الطلب الأسبوعي لكل متجر = 80 وحدة، الانحراف المعياري = 30 وحدة، Lead time = أسبوعان. تدرس الشركة المركزة في DC واحد يخدم جميع المتاجر. z = 1.65",
+   ar_q:"س12. احسب الـ Safety Stock المطلوب: (أ) في المتاجر الـ 50 كل منها بصورة مستقلة، (ب) في الـ DC المركزي. ما مقدار التوفير الناتج عن المركزة؟ اعرض جميع الخطوات.",
+   ar_hint:"σ_LT المركزية = √n × σ_LT الفردية، حيث σ_LT الفردية = σ × √(Lead Time)"},
 
   // ── TOPIC 8: Centralization and Aggregation ──────────────────────────
   {part:"E",label:"Inventory Aggregation",level:"P2",
    scenario:"A retail chain has 20 stores each with average weekly demand of 150 units and standard deviation of 40 units per store. Lead time = 2 weeks. They propose merging into one central DC serving all 20 stores.",
    q:"Q13. Without calculating, explain why centralising inventory at one DC allows the chain to hold less total safety stock than keeping inventory at 20 separate stores. What statistical principle makes this work?",
    pass_criteria:"Explains that demands across stores partially offset each other when pooled. Names the risk pooling or statistical aggregation principle — the standard deviation of combined demand grows slower than the sum of individual standard deviations.",
-   fail_reason:"When demands are pooled, high demand at one store is often offset by low demand at another — this is RISK POOLING. The combined standard deviation grows proportionally to √n (not n), so centralised safety stock is much less than the sum of individual safety stocks."},
+   fail_reason:"When demands are pooled, high demand at one store is often offset by low demand at another — this is RISK POOLING. The combined standard deviation grows proportionally to √n (not n), so centralised safety stock is much less than the sum of individual safety stocks.",
+   ar_scenario:"لدى سلسلة بيع بالتجزئة 20 متجراً، متوسط الطلب الأسبوعي لكل منها = 150 وحدة، الانحراف المعياري = 40 وحدة. Lead time = أسبوعان. يُقترح دمج المخزون في DC مركزي واحد.",
+   ar_q:"س13. دون إجراء حسابات، اشرح لماذا تمركز المخزون في DC واحد يُتيح الاحتفاظ بـ Safety Stock أقل. ما المبدأ الإحصائي الذي يجعل ذلك ممكناً؟"},
 
   {part:"E",label:"Inventory Aggregation",level:"M",
    scenario:"The retail chain's CEO asks: 'If centralising reduces safety stock, why don't all companies centralise everything?' The logistics director lists two reasons why some companies still prefer decentralised inventory.",
    q:"Q14. Give two specific reasons why a company might prefer decentralised inventory despite the safety stock savings from centralisation. For each reason, name a type of product or business where this concern is most relevant.",
    pass_criteria:"Two valid reasons such as: longer delivery times to customers (relevant for perishables or time-sensitive products), higher transportation costs from one central point (relevant for heavy or bulky goods), loss of customer proximity (relevant for fashion or urgent medical supplies).",
-   fail_reason:"Two reasons to prefer decentralisation: (1) LONGER DELIVERY TIMES — customers wait longer if served from one distant DC (critical for perishable goods or same-day delivery promises). (2) HIGHER OUTBOUND TRANSPORT COSTS — shipping individually to many customers from one point is expensive (relevant for bulky or heavy products where freight costs dominate)."},
+   fail_reason:"Two reasons to prefer decentralisation: (1) LONGER DELIVERY TIMES — customers wait longer if served from one distant DC (critical for perishable goods or same-day delivery promises). (2) HIGHER OUTBOUND TRANSPORT COSTS — shipping individually to many customers from one point is expensive (relevant for bulky or heavy products where freight costs dominate).",
+   ar_scenario:"يتساءل المدير التنفيذي: إذا كانت المركزة تُقلّل الـ Safety Stock، فلماذا لا تُمركز جميع الشركات مخزونها؟ يُعدّد مدير اللوجستيات سببين يجعلان بعض الشركات تُفضّل المخزون الموزع.",
+   ar_q:"س14. أعطِ سببين محددين يجعلان شركةً ما تُفضّل المخزون الموزع رغم وفورات الـ Safety Stock الناتجة عن المركزة. ولكل سبب، اذكر نوع المنتج أو الشركة الأكثر تأثراً بهذا السبب."},
 
   // ── TOPIC 9: Network Design and Facilities ───────────────────────────
   {part:"F",label:"Network Design",level:"P2",
    scenario:"QuickDeliver currently ships all orders directly from its central warehouse in Amman to customers across Jordan. A consultant proposes adding regional DCs in Irbid, Aqaba, and Zarqa. The consultant's report shows: each new DC reduces average delivery distance by 35% but adds JD 180,000/year in fixed costs.",
    q:"Q15. As QuickDeliver adds more DCs, what happens to transportation costs and what happens to facility costs? Is there an optimal number of DCs, and what determines it?",
    pass_criteria:"Transportation costs decrease as more DCs are added (shorter distances). Facility costs increase (more fixed costs). The optimal number balances the two — where total cost is minimised.",
-   fail_reason:"Adding more DCs DECREASES transportation costs (shorter delivery distances) but INCREASES facility costs (more rent, staff, equipment). The optimal number of DCs is where the total of both costs is minimised — adding one more DC beyond this point costs more in facility expenses than it saves in transport."},
+   fail_reason:"Adding more DCs DECREASES transportation costs (shorter delivery distances) but INCREASES facility costs (more rent, staff, equipment). The optimal number of DCs is where the total of both costs is minimised — adding one more DC beyond this point costs more in facility expenses than it saves in transport.",
+   ar_scenario:"تشحن QuickDeliver جميع طلباتها من مستودع واحد في عمان. يقترح استشاري فتح DCs إقليمية في إربد والعقبة والزرقاء. كل DC جديد يُقلّل متوسط مسافة التوصيل بنسبة 35%، غير أنه يُضيف 180,000 دينار سنوياً كـ fixed costs.",
+   ar_q:"س15. مع إضافة المزيد من الـ DCs، ماذا يحدث لتكاليف النقل وماذا يحدث لتكاليف المنشآت؟ هل ثمة عدد مثالي من الـ DCs؟ وما الذي يُحدّده؟"},
 
   // ── TOPIC 10: Transportation Networks ───────────────────────────────
   {part:"F",label:"Transportation Networks",level:"P1",
    scenario:"FoodExpress makes small daily deliveries to 15 restaurants scattered across Amman. Each restaurant orders a small quantity — too small to fill a full truck on its own. FoodExpress is choosing between two options: (A) send a separate truck to each restaurant, or (B) use one truck that visits multiple restaurants in sequence on a planned route.",
    q:"Q16. Which option is better for FoodExpress given its situation? What is this routing strategy called and why is it suited to small, frequent deliveries to nearby customers?",
    pass_criteria:"Option B correctly identified as better. Names milk runs. Explains it is suited to small orders and nearby customers because it consolidates deliveries into one trip, reducing cost per delivery.",
-   fail_reason:"Option B — MILK RUNS — is better. A milk run sends one truck to visit multiple customers in sequence on a planned route. It is ideal when order quantities are small (no single customer fills a truck) and customers are geographically close, because it consolidates shipments and dramatically reduces cost per delivery compared to direct shipping."},
+   fail_reason:"Option B — MILK RUNS — is better. A milk run sends one truck to visit multiple customers in sequence on a planned route. It is ideal when order quantities are small (no single customer fills a truck) and customers are geographically close, because it consolidates shipments and dramatically reduces cost per delivery compared to direct shipping.",
+   ar_scenario:"FoodExpress تقوم بتوصيلات صغيرة يومية لـ 15 مطعماً في عمان. كل مطعم يطلب كمية صغيرة لا تكفي لملء شاحنة. الخياران: (أ) شاحنة منفصلة لكل مطعم، (ب) شاحنة واحدة تزور عدة مطاعم بالتسلسل.",
+   ar_q:"س16. أيّ الخيارين أفضل لـ FoodExpress؟ ما اسم هذه الاستراتيجية التوزيعية، ولماذا تُناسب التوصيلات الصغيرة والمتكررة للعملاء المتقاربين جغرافياً؟"},
 
   // ── TOPIC 11: NPV and Decision Trees ────────────────────────────────
   {part:"G",label:"NPV and Decision Trees",level:"P1",
@@ -279,13 +305,22 @@ const QS = [
    q:"Q17. Calculate the NPV for both options. Which should ColdStore choose? Show all steps.",
    hint:"NPV = C\u2081/(1.1)\u00b9 + C\u2082/(1.1)\u00b2 where C = Revenue \u2212 Cost for that year",
    pass_criteria:"Lease: Year1=60,000, Year2=60,000. NPV = 60,000/1.1 + 60,000/1.21 = 54,545 + 49,587 = 104,132. Buy: Year1=30,000, Year2=100,000. NPV = 30,000/1.1 + 100,000/1.21 = 27,273 + 82,645 = 109,917. Choose Buy.",
-   fail_reason:"Lease NPV = 60,000/1.1 + 60,000/1.21 = 54,545 + 49,587 = JD 104,132. Buy NPV = 30,000/1.1 + 100,000/1.21 = 27,273 + 82,645 = JD 109,917. Choose BUY — higher NPV. Both years must be discounted separately."},
+   fail_reason:"Lease NPV = 60,000/1.1 + 60,000/1.21 = 54,545 + 49,587 = JD 104,132. Buy NPV = 30,000/1.1 + 100,000/1.21 = 27,273 + 82,645 = JD 109,917. Choose BUY — higher NPV. Both years must be discounted separately.",
+   ar_scenario:"يدرس ColdStore خيارين لاستيعاب مستودع مبرّد: الاستئجار أو الشراء. k = 0.10. الإيرادات السنوية = 100,000 دينار لكلا الخيارين. تكلفة الاستئجار = 40,000 دينار سنوياً. تكلفة الشراء = 70,000 دينار دفعة واحدة في السنة الأولى فقط. يُقيَّم الخياران على مدى سنتين.",
+   ar_q:"س17. احسب NPV لكلا الخيارين. أيهما يختار ColdStore؟ اعرض جميع الخطوات.",
+   ar_hint:"NPV = C₁/(1.1)¹ + C₂/(1.1)² ، حيث C = الإيراد مطروحاً منه التكلفة لكل سنة",
+   ar_scenario:"يدرس ColdStore خيارين لاستيعاب مستودع مبرّد: الاستئجار أو الشراء. k = 0.10. الإيرادات السنوية = 100,000 دينار لكلا الخيارين. تكلفة الاستئجار = 40,000 دينار سنوياً. تكلفة الشراء = 70,000 دينار دفعة واحدة في السنة الأولى فقط. يُقيَّم الخياران على مدى سنتين.",
+   ar_q:"س17. احسب الـ NPV لكلا الخيارين. أيّهما يجب أن تختار ColdStore؟ اعرض جميع الخطوات.",
+   ar_hint:"NPV = C₁/(1.1)¹ + C₂/(1.1)² ، حيث C = الإيراد مطروحاً منه التكلفة لكل سنة"},
+
 
   {part:"G",label:"NPV and Decision Trees",level:"M",
    scenario:"ColdStore's Year 2 demand is uncertain: High (prob 0.7, profit JD 110,000) or Low (prob 0.3, profit JD 20,000).",
    q:"Q18. Calculate the expected NPV of Year 2 profit. Then explain in one sentence why a decision tree is more useful than a fixed NPV when demand is uncertain.",
    pass_criteria:"Expected profit = 0.7×110,000 + 0.3×20,000 = 77,000 + 6,000 = 83,000. NPV = 83,000/1.21 = 68,595. Decision tree explanation correct.",
-   fail_reason:"Expected profit = (0.7 × 110,000) + (0.3 × 20,000) = 77,000 + 6,000 = JD 83,000. NPV = 83,000 ÷ 1.21 = JD 68,595. A decision tree is better because it explicitly models multiple possible outcomes with their probabilities, while a fixed NPV assumes one certain cash flow."},
+   fail_reason:"Expected profit = (0.7 × 110,000) + (0.3 × 20,000) = 77,000 + 6,000 = JD 83,000. NPV = 83,000 ÷ 1.21 = JD 68,595. A decision tree is better because it explicitly models multiple possible outcomes with their probabilities, while a fixed NPV assumes one certain cash flow.",
+   ar_scenario:"الطلب في السنة الثانية لـ ColdStore غير مؤكد: إما مرتفع (احتمال 0.7، ربح 110,000 دينار) أو منخفض (احتمال 0.3، ربح 20,000 دينار).",
+   ar_q:"س18. احسب الـ Expected NPV لربح السنة الثانية. ثم اشرح في جملة واحدة: لماذا يُعدّ الـ decision tree أكثر ملاءمةً من الـ fixed NPV عندما يكون الطلب غير مؤكد؟"},
 
   {part:"G",label:"NPV and Decision Trees",level:"D",
    scenario:"ColdStore can now expand the warehouse in Year 2 if demand is high. Expansion costs JD 30,000 but increases Year 2 profit to JD 150,000 (vs JD 110,000 without expansion). If demand is low, no expansion is made and Year 2 profit stays at JD 20,000. k = 0.10.",
@@ -298,12 +333,15 @@ const QS = [
    scenario:"Jordan Mills supplies flour to two markets: Amman (demand = 70,000 kg/yr) and Zarqa (demand = 50,000 kg/yr). Two factory sites: Site X — Rusaifa (capacity 80,000 kg, fixed cost JD 160,000/yr) and Site Y — Sahab (capacity 90,000 kg, fixed cost JD 190,000/yr). Shipping: X→Amman=JD2.50/kg, X→Zarqa=JD1.80/kg, Y→Amman=JD2.10/kg, Y→Zarqa=JD3.20/kg.",
    q:"Q20. Define all decision variables for this capacitated plant location model using standard notation.",
    pass_criteria:"Binary: y_X = 1 if Site X open, 0 otherwise; y_Y = 1 if Site Y open, 0 otherwise. Continuous: x_X1 = kg from X to Amman, x_X2 = kg from X to Zarqa, x_Y1 = kg from Y to Amman, x_Y2 = kg from Y to Zarqa.",
-   fail_reason:"Binary variables: y_X = 1 if Site X (Rusaifa) is open, 0 otherwise; y_Y = 1 if Site Y (Sahab) is open, 0 otherwise. Continuous variables: x_X1 = kg shipped from X to Amman; x_X2 = kg from X to Zarqa; x_Y1 = kg from Y to Amman; x_Y2 = kg from Y to Zarqa."},
+   fail_reason:"Binary variables: y_X = 1 if Site X (Rusaifa) is open, 0 otherwise; y_Y = 1 if Site Y (Sahab) is open, 0 otherwise. Continuous variables: x_X1 = kg shipped from X to Amman; x_X2 = kg from X to Zarqa; x_Y1 = kg from Y to Amman; x_Y2 = kg from Y to Zarqa.",
+   ar_scenario:"تُورد Jordan Mills الدقيق لسوقين: عمان (الطلب = 70,000 كجم سنوياً) والزرقاء (50,000 كجم سنوياً). الموقع X في الرصيفة (capacity = 80,000 كجم، fixed cost = 160,000 دينار سنوياً)، والموقع Y في سحاب (capacity = 90,000 كجم، fixed cost = 190,000 دينار سنوياً). تكاليف الشحن: X→عمان = 2.50، X→الزرقاء = 1.80، Y→عمان = 2.10، Y→الزرقاء = 3.20 دينار/كجم.",
+   ar_q:"س20. عرِّف جميع متغيرات القرار (decision variables) لنموذج الـ capacitated plant location هذا باستخدام الترميز القياسي."},
 
   {part:"H",label:"Plant Location LP",level:"M",
    q:"Q21. Write the objective function for the Jordan Mills model. Explain what each group of terms represents.",
    pass_criteria:"Min Z = 160,000y_X + 190,000y_Y + 2.50x_X1 + 1.80x_X2 + 2.10x_Y1 + 3.20x_Y2. Fixed cost terms and variable shipping cost terms both explained.",
-   fail_reason:"Min Z = 160,000·y_X + 190,000·y_Y + 2.50·x_X1 + 1.80·x_X2 + 2.10·y_Y1 + 3.20·x_Y2. First two terms = fixed costs paid only if each site opens. Last four terms = variable shipping costs per kg from each site to each market. All six terms required."},
+   fail_reason:"Min Z = 160,000·y_X + 190,000·y_Y + 2.50·x_X1 + 1.80·x_X2 + 2.10·x_Y1 + 3.20·x_Y2. First two terms = fixed costs paid only if each site opens. Last four terms = variable shipping costs per kg from each site to each market. All six terms required.",
+   ar_q:"س21. اكتب دالة الهدف (objective function) لنموذج Jordan Mills، واشرح ما تُمثّله كل مجموعة من الحدود."},
 
   // ── TOPIC 13: Transportation Cost Calculation ─────────────────────────
   // Note: not included as separate question — covered implicitly in network topics
@@ -400,9 +438,12 @@ function renderQ(){
   document.getElementById('e-prog').style.width = Math.round(((ST.q+1)/t)*100) + '%';
   let h = '';
   if(q.scenario) h += '<div class="scenario">' + q.scenario + '</div>';
+  if(q.ar_scenario) h += '<div class="scenario" style="direction:rtl;text-align:right;border-left:none;border-right:3px solid var(--blue);font-family:Arial,sans-serif">' + q.ar_scenario + '</div>';
   h += '<div class="qmeta">Q' + (ST.q+1) + ' \u00b7 Part ' + q.part + ' \u00b7 ' + q.level + ' level</div>';
   h += '<div class="qtext">' + q.q + '</div>';
+  if(q.ar_q) h += '<div class="qtext" style="direction:rtl;text-align:right;font-family:Arial,sans-serif;font-size:14px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)">' + q.ar_q + '</div>';
   if(q.hint) h += '<div class="hint">' + q.hint + '</div>';
+  if(q.ar_hint) h += '<div class="hint" style="direction:rtl;text-align:right;font-family:Arial,sans-serif">' + q.ar_hint + '</div>';
   h += '<textarea id="ans" placeholder="Write your answer here\u2026 (2\u20133 sentences max)" rows="5">' + esc(ST.ans[ST.q]||'') + '</textarea>';
   document.getElementById('e-q').innerHTML = h;
   const ta = document.getElementById('ans');
