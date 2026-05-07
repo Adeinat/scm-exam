@@ -497,7 +497,7 @@ function renderQ(){
   document.getElementById('e-q').innerHTML = h;
   const ta = document.getElementById('ans');
   ta.addEventListener('input', e=>{ ST.ans[ST.q]=e.target.value; });
-  //ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
+  ta.addEventListener('paste', e=>{ e.preventDefault(); alert('Pasting is not allowed. Please type your answer.'); });
   document.getElementById('btn-prev').style.visibility = ST.q>0?'visible':'hidden';
   document.getElementById('btn-next').textContent = ST.q<t-1?'Next \u2192':'Submit exam \u2192';
 }
@@ -534,6 +534,11 @@ async function submitExam(){
 async function gradeOne(q, ans, idx){
   const prompt =
     'You are grading a supply chain management exam. The student may answer in English or Arabic \u2014 evaluate in whichever language they used and give feedback in the same language.\n\n' +
+    'GRADING RULES:\n' +
+    '1. For CALCULATION questions: accept any answer within 2% of the correct value due to rounding differences. Accept correct method even if minor arithmetic error. If the student uses a valid alternative method and gets the right answer, mark as passed.\n' +
+    '2. For CONCEPTUAL questions: accept any answer that demonstrates the correct understanding, even if worded differently from the model answer. Do not require specific wording.\n' +
+    '3. For LP/FORMULA questions: accept correct mathematical notation even if formatting differs. Accept equivalent constraint forms.\n' +
+    '4. Never penalise for rounding to different decimal places if the approach is correct.\n\n' +
     'QUESTION: ' + q.q + '\n' +
     (q.hint?'HINT GIVEN: '+q.hint+'\n':'') +
     (q.scenario?'CONTEXT: '+q.scenario+'\n':'') +
