@@ -105,35 +105,60 @@ select{border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;
 
   <!-- EXAM CONTROLS -->
   <div class="card" style="margin-bottom:1rem">
-    <h3 style="margin-bottom:12px">Exam controls</h3>
+    <h3 style="margin-bottom:14px">Exam controls</h3>
 
-    <!-- Open/Close toggle -->
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:4px">
-      <label class="tog"><input type="checkbox" id="exam-tog" onchange="toggleExam(this.checked)"><span class="tog-s"></span></label>
-      <div>
-        <div style="font-weight:600">Status: <span id="tog-label"></span> <span id="tog-badge" class="badge"></span></div>
-        <div class="sub" style="font-size:13px">Turn OFF between sections to prevent students sharing questions</div>
+    <!-- Practice Exam (id=1) -->
+    <div style="background:var(--bg2);border-radius:var(--rs);padding:14px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">Practice Exam</div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:4px">
+        <label class="tog"><input type="checkbox" id="exam-tog-1" onchange="toggleExam(1,this.checked)"><span class="tog-s"></span></label>
+        <div>
+          <div style="font-weight:600">Status: <span id="tog-label-1"></span> <span id="tog-badge-1" class="badge"></span></div>
+          <div class="sub" style="font-size:13px">adeinat.github.io/scm-exam/</div>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <label>&#9201; Duration</label>
+        <input type="number" id="inp-duration-1" min="1" max="180" style="width:80px">
+        <span style="font-size:14px;color:var(--text2)">minutes</span>
+        <button class="btn btn-p" onclick="setDuration(1)" style="padding:6px 14px;font-size:13px">Set</button>
+        <span class="success-msg" id="dur-msg-1">&#10003; Saved</span>
+      </div>
+      <div class="ctrl-row">
+        <label>&#43; Extra time</label>
+        <input type="number" id="inp-extra-1" min="1" max="60" placeholder="e.g. 10" style="width:80px">
+        <span style="font-size:14px;color:var(--text2)">minutes</span>
+        <button class="btn btn-green" onclick="grantExtra(1)" style="padding:6px 14px;font-size:13px">Grant</button>
+        <span class="success-msg" id="extra-msg-1">&#10003; Granted</span>
+        <span class="sub" style="font-size:13px" id="extra-total-1"></span>
       </div>
     </div>
 
-    <!-- Exam duration -->
-    <div class="ctrl-row">
-      <label>&#9201; Exam duration</label>
-      <input type="number" id="inp-duration" min="10" max="180" style="width:80px">
-      <span style="font-size:14px;color:var(--text2)">minutes</span>
-      <button class="btn btn-p" onclick="setDuration()" style="padding:6px 14px;font-size:13px">Set duration</button>
-      <span class="success-msg" id="dur-msg">&#10003; Saved</span>
-      <span class="sub" style="font-size:13px">Affects students who have not started yet</span>
-    </div>
-
-    <!-- Extra time -->
-    <div class="ctrl-row">
-      <label>&#43; Add extra time</label>
-      <input type="number" id="inp-extra" min="1" max="60" placeholder="e.g. 10" style="width:80px">
-      <span style="font-size:14px;color:var(--text2)">minutes</span>
-      <button class="btn btn-green" onclick="grantExtra()" style="padding:6px 14px;font-size:13px">Grant to all active</button>
-      <span class="success-msg" id="extra-msg">&#10003; Extra time granted</span>
-      <span class="sub" style="font-size:13px" id="extra-total"></span>
+    <!-- Mock Exam (id=2) -->
+    <div style="background:var(--bg2);border-radius:var(--rs);padding:14px">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">Mock Exam</div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:4px">
+        <label class="tog"><input type="checkbox" id="exam-tog-2" onchange="toggleExam(2,this.checked)"><span class="tog-s"></span></label>
+        <div>
+          <div style="font-weight:600">Status: <span id="tog-label-2"></span> <span id="tog-badge-2" class="badge"></span></div>
+          <div class="sub" style="font-size:13px">adeinat.github.io/scm-exam/mock_exam.html</div>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <label>&#9201; Duration</label>
+        <input type="number" id="inp-duration-2" min="1" max="180" style="width:80px">
+        <span style="font-size:14px;color:var(--text2)">minutes</span>
+        <button class="btn btn-p" onclick="setDuration(2)" style="padding:6px 14px;font-size:13px">Set</button>
+        <span class="success-msg" id="dur-msg-2">&#10003; Saved</span>
+      </div>
+      <div class="ctrl-row">
+        <label>&#43; Extra time</label>
+        <input type="number" id="inp-extra-2" min="1" max="60" placeholder="e.g. 10" style="width:80px">
+        <span style="font-size:14px;color:var(--text2)">minutes</span>
+        <button class="btn btn-green" onclick="grantExtra(2)" style="padding:6px 14px;font-size:13px">Grant</button>
+        <span class="success-msg" id="extra-msg-2">&#10003; Granted</span>
+        <span class="sub" style="font-size:13px" id="extra-total-2"></span>
+      </div>
     </div>
   </div>
 
@@ -224,54 +249,58 @@ function signOut(){
   document.getElementById('s-login').style.display='block';
 }
 
-async function loadData(){
-  const {data:s} = await sb.from('exam_settings').select('is_open,exam_minutes,extra_minutes').eq('id',1).single();
+async function loadSettings(id){
+  const {data:s} = await sb.from('exam_settings').select('is_open,exam_minutes,extra_minutes').eq('id',id).single();
   const open  = s?.is_open || false;
   const mins  = s?.exam_minutes || 65;
   const extra = s?.extra_minutes || 0;
-
-  document.getElementById('exam-tog').checked = open;
-  document.getElementById('tog-label').textContent = open ? 'Open' : 'Closed';
-  const tb = document.getElementById('tog-badge');
+  document.getElementById('exam-tog-'+id).checked = open;
+  document.getElementById('tog-label-'+id).textContent = open ? 'Open' : 'Closed';
+  const tb = document.getElementById('tog-badge-'+id);
   tb.textContent = open ? 'OPEN' : 'CLOSED';
   tb.className = 'badge ' + (open ? 'bo' : 'bc');
+  document.getElementById('inp-duration-'+id).value = mins;
+  const et = document.getElementById('extra-total-'+id);
+  if(et) et.textContent = extra > 0 ? 'Total extra: ' + extra + ' min' : '';
+}
 
-  document.getElementById('inp-duration').value = mins;
-  document.getElementById('extra-total').textContent = extra > 0 ? 'Total extra granted so far: ' + extra + ' min' : '';
-
+async function loadData(){
+  await loadSettings(1);
+  await loadSettings(2);
   const {data} = await sb.from('exam_attempts').select('*').order('created_at',{ascending:false});
   allAttempts = data || [];
   renderStats();
   renderTable();
 }
 
-async function toggleExam(val){
-  await sb.from('exam_settings').update({is_open:val}).eq('id',1);
-  document.getElementById('tog-label').textContent = val ? 'Open' : 'Closed';
-  const tb = document.getElementById('tog-badge');
+async function toggleExam(id, val){
+  await sb.from('exam_settings').update({is_open:val}).eq('id',id);
+  document.getElementById('tog-label-'+id).textContent = val ? 'Open' : 'Closed';
+  const tb = document.getElementById('tog-badge-'+id);
   tb.textContent = val ? 'OPEN' : 'CLOSED';
   tb.className = 'badge ' + (val ? 'bo' : 'bc');
 }
 
-async function setDuration(){
-  const mins = parseInt(document.getElementById('inp-duration').value);
-  if(!mins || mins < 10){ alert('Please enter a valid duration (minimum 10 minutes).'); return; }
-  const {error} = await sb.from('exam_settings').update({exam_minutes:mins}).eq('id',1);
+async function setDuration(id){
+  const mins = parseInt(document.getElementById('inp-duration-'+id).value);
+  if(!mins || mins < 1){ alert('Please enter a valid duration.'); return; }
+  const {error} = await sb.from('exam_settings').update({exam_minutes:mins}).eq('id',id);
   if(error){ alert('Save failed: ' + error.message); return; }
-  const msg = document.getElementById('dur-msg');
+  const msg = document.getElementById('dur-msg-'+id);
   msg.style.display = 'inline';
   setTimeout(()=>{ msg.style.display='none'; }, 3000);
 }
 
-async function grantExtra(){
-  const add = parseInt(document.getElementById('inp-extra').value);
+async function grantExtra(id){
+  const add = parseInt(document.getElementById('inp-extra-'+id).value);
   if(!add || add < 1){ alert('Please enter a valid number of minutes.'); return; }
-  const {data:curr} = await sb.from('exam_settings').select('extra_minutes').eq('id',1).single();
+  const {data:curr} = await sb.from('exam_settings').select('extra_minutes').eq('id',id).single();
   const total = (curr?.extra_minutes || 0) + add;
-  await sb.from('exam_settings').update({extra_minutes:total}).eq('id',1);
-  document.getElementById('extra-total').textContent = 'Total extra granted so far: ' + total + ' min';
-  document.getElementById('inp-extra').value = '';
-  const msg = document.getElementById('extra-msg');
+  await sb.from('exam_settings').update({extra_minutes:total}).eq('id',id);
+  const et = document.getElementById('extra-total-'+id);
+  if(et) et.textContent = 'Total extra: ' + total + ' min';
+  document.getElementById('inp-extra-'+id).value = '';
+  const msg = document.getElementById('extra-msg-'+id);
   msg.style.display = 'inline';
   setTimeout(()=>{ msg.style.display='none'; }, 3000);
 }
