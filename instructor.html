@@ -321,7 +321,7 @@ function openDetail(id){
   document.getElementById('m-body').innerHTML = `
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">ID: <strong>${esc(a.student_id)}</strong> \u00b7 Submitted: ${a.completed_at?new Date(a.completed_at).toLocaleString():'\u2014'}</p>
     ${a.results.map((r,i)=>{
-      const q = QS_SHORT[i];
+      const q = QS_SHORT[i] || {part:'?', level:'?', q:'Q'+(i+1)};
       const ans = a.answers?.[i] || '(no answer)';
       const fb = r.feedback&&r.feedback!=='undefined'&&r.feedback.length>2 ? r.feedback : 'See instructor.';
       const badgeLabel = r.passed ? 'Earned ' + q.level : 'Did not earn ' + q.level;
