@@ -286,7 +286,7 @@ async function doLogin(){
   const btn = document.getElementById('btn-login');
   btn.disabled=true; btn.innerHTML='<span class="spin"></span> Loading&#8230;';
   try{
-    const {data:prev} = await sb.from('exam_attempts').select('id,grade,created_at,status').eq('student_id',sid).order('created_at',{ascending:false});
+    const {data:prev} = await sb.from('exam_attempts').select('id,grade,created_at,status').eq('student_id',sid).eq('exam_type','practice').order('created_at',{ascending:false});
     const done = prev ? prev.filter(a=>a.status==='completed') : [];
     if(done.length>0){
       const a=done[0];
@@ -299,7 +299,7 @@ async function doLogin(){
     const examMins = settings?.exam_minutes || 65;
     const extraMins = settings?.extra_minutes || 0;
 
-    const {data:na} = await sb.from('exam_attempts').insert({student_name:name,student_id:sid,grade:null,status:'in_progress'}).select().single();
+    const {data:na} = await sb.from('exam_attempts').insert({student_name:name,student_id:sid,grade:null,status:'in_progress',exam_type:'practice'}).select().single();
     ST.name=name; ST.sid=sid; ST.aid=na?.id; ST.q=0; ST.ans={};
     show('s-exam'); renderQ();
     startTimer(examMins, extraMins);
